@@ -6,6 +6,8 @@ google_drive/
 # Saídas geradas pelo notebook (reproduzíveis por Restart & Run All)
 resultados/*
 !resultados/.gitkeep
+dados_tratados/*.csv
+!dados_tratados/.gitkeep
 
 # Python / Jupyter
 __pycache__/
