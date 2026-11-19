@@ -16,7 +16,8 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 4 | Duas bases | `04_parte4_bases.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 1 (Q1–Q4) | `05_parte5_nivel1.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 2 (Q5–Q7) | `06_parte5_nivel2.ipynb` | ✅ concluída |
-| 5 | Questões de negócio — Níveis 3 e 4 (Q8–Q12) | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio — Nível 3 (Q8–Q10) | `07_parte5_nivel3.ipynb` | ✅ concluída |
+| 5 | Questões de negócio — Nível 4 (Q11–Q12) | ⏳ | ⏳ pendente |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
 | 7 | Síntese | ⏳ | ⏳ pendente |
 
@@ -56,7 +57,8 @@ dados_brutos/
 │   ├── 03_parte3_variaveis.ipynb
 │   ├── 04_parte4_bases.ipynb
 │   ├── 05_parte5_nivel1.ipynb
-│   └── 06_parte5_nivel2.ipynb
+│   ├── 06_parte5_nivel2.ipynb
+│   └── 07_parte5_nivel3.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -179,7 +181,7 @@ A Parte 5 é construída **um nível por vez**:
 |---|---|---|
 | 1 — visão geral e temporal | Q1–Q4 | `05_parte5_nivel1.ipynb` |
 | 2 — fatores de risco | Q5–Q7 | `06_parte5_nivel2.ipynb` |
-| 3 — cruzamentos | Q8–Q10 | pendente |
+| 3 — cruzamentos | Q8–Q10 | `07_parte5_nivel3.ipynb` |
 | 4 — casos críticos | Q11–Q12 | pendente |
 
 **Definição usada:** taxa de letalidade = **% de acidentes fatais do grupo** (conforme o
@@ -202,6 +204,14 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 | Q5 | Colisão frontal (lift 4,16) e atropelamento de pedestre (lift 4,04) — 45% dos fatais |
 | Q6 | Top 5 dominado por pedestre e contramão; álcool no pedestre 2,25 vs **álcool no condutor 0,63** |
 | Q7 | Curva 8,19% > reta 7,35%, mas ponte (10,75%) e declive (9,85%) são piores; explode declarado como não-partição |
+
+### Resultados do Nível 3
+
+| Questão | Achado |
+|---|---|
+| Q8 | Letalidade quase igual nos três períodos (6,63%–7,40%); Fim de Ano tem +8,7% acidentes/dia e +25% mortos/dia; Carnaval não se distingue de dia normal |
+| Q9 | Pista Simples (9,83%) mais que dobra a Dupla (4,69%) em **7 de 7** condições; pior célula Simples+Nevoeiro (13,95%); chuva com lift 0,86 |
+| Q10 | Por **mortos**: BR-116 (1.190) e BR-101 (1.076); top 10 = 52,4% das mortes noturnas; só a BR-316 aparece também no ranking por taxa |
 
 ## Licença e fonte
 
