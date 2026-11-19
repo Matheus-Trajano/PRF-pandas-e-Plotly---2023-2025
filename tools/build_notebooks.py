@@ -1,0 +1,298 @@
+#!/usr/bin/env python3
+"""Gera os notebooks do exercício (um por parte). Uso: python tools/build_notebooks.py"""
+import json
+from pathlib import Path
+
+RAIZ = Path(__file__).resolve().parent.parent
+DIR_NB = RAIZ / "notebooks"
+
+
+def md(*linhas):
+    return {"cell_type": "markdown", "metadata": {}, "source": list(linhas)}
+
+
+def code(*linhas):
+    return {"cell_type": "code", "execution_count": None, "metadata": {},
+            "outputs": [], "source": list(linhas)}
+
+
+def gravar(nome, cells):
+    nb = {
+        "cells": cells,
+        "metadata": {
+            "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+            "language_info": {"name": "python", "version": "3.11"},
+        },
+        "nbformat": 4, "nbformat_minor": 5,
+    }
+    destino = DIR_NB / nome
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    destino.write_text(json.dumps(nb, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"gerado: {destino.relative_to(RAIZ)} ({len(cells)} células)")
+
+
+# ---------------------------------------------------------------- código comum
+SETUP = code(
+    "import unicodedata\n",
+    "from pathlib import Path\n",
+    "\n",
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "\n",
+    "\n",
+    "def localizar_raiz() -> Path:\n",
+    "    for candidato in [Path.cwd(), *Path.cwd().parents]:\n",
+    "        if (candidato / \"dados_brutos\").is_dir():\n",
+    "            return candidato\n",
+    "    raise FileNotFoundError(\"Abra o notebook da raiz do projeto ou de 'notebooks/'.\")\n",
+    "\n",
+    "\n",
+    "RAIZ = localizar_raiz()\n",
+    "DIR_BRUTOS = RAIZ / \"dados_brutos\"\n",
+    "DIR_TRATADOS = RAIZ / \"dados_tratados\"\n",
+    "DIR_RESULTADOS = RAIZ / \"resultados\"\n",
+    "for pasta in (DIR_TRATADOS, DIR_RESULTADOS):\n",
+    "    pasta.mkdir(parents=True, exist_ok=True)\n",
+    "\n",
+    "SEPARADOR = \";\"\n",
+    "ENCODING_SAIDA = \"utf-8-sig\"\n",
+    "ANOS = (2023, 2024, 2025)\n",
+    "print(RAIZ)\n",
+)
+
+LER = code(
+    "def ler_csv_prf(caminho: Path) -> pd.DataFrame:\n",
+    "    \"\"\"Lê o CSV tentando vários encodings; só falha se todos falharem.\"\"\"\n",
+    "    for encoding in (\"utf-8\", \"latin1\", \"utf-8-sig\", \"cp1252\"):\n",
+    "        try:\n",
+    "            df = pd.read_csv(caminho, sep=SEPARADOR, encoding=encoding,\n",
+    "                             low_memory=False, dtype={\"id\": \"string\"})\n",
+    "        except (UnicodeDecodeError, UnicodeError):\n",
+    "            continue\n",
+    "        print(f\"{caminho.name}: encoding={encoding}, {len(df):,} linhas\")\n",
+    "        return df\n",
+    "    raise RuntimeError(f\"Nenhum encoding funcionou para {caminho}\")\n",
+    "\n",
+    "\n",
+    "def normalizar_nome(nome: str) -> str:\n",
+    "    nome = str(nome).strip().lower()\n",
+    "    nome = unicodedata.normalize(\"NFKD\", nome).encode(\"ascii\", \"ignore\").decode()\n",
+    "    return nome.replace(\" \", \"_\").replace(\"-\", \"_\").replace(\"/\", \"_\").strip(\"_\")\n",
+)
+
+
+# ---------------------------------------------------------------- Parte 1
+def notebook_parte1():
+    return [
+        md("# Parte 1 — Ingestão e integração\n",
+           "\n",
+           "Leitura dos três CSVs da PRF, padronização dos nomes de coluna, conferência de schema\n",
+           "e união numa base única, com prova de que nenhuma linha foi perdida.\n"),
+
+        md("## 1.1 Setup\n"),
+        SETUP,
+
+        md("## 1.2 Leitura dos três CSVs (`ler_csv_prf` com fallback de encoding)\n",
+           "\n",
+           "`utf-8` falha nos três arquivos da PRF, então o fallback para `latin1` é realmente usado.\n",
+           "`id` é lido como texto porque em 2024 há uma linha com `id = \"6e+05\"` (veio de planilha).\n"),
+        LER,
+        code(
+            "dados_por_ano = {ano: ler_csv_prf(DIR_BRUTOS / f\"datatran{ano}.csv\") for ano in ANOS}\n",
+        ),
+
+        md("## 1.3 Padronização de colunas e conferência entre os anos\n"),
+        code(
+            "for df in dados_por_ano.values():\n",
+            "    df.columns = [normalizar_nome(c) for c in df.columns]\n",
+            "\n",
+            "colunas = {ano: set(df.columns) for ano, df in dados_por_ano.items()}\n",
+            "assert set.intersection(*colunas.values()) == set.union(*colunas.values()), \\\n",
+            "    \"Há coluna que não existe em todos os anos\"\n",
+            "print(f\"Colunas: {sorted(colunas[2023])}\")\n",
+        ),
+
+        md("## 1.4 `arquivo_origem` e `concat` em `acidentes_prf_historico`\n"),
+        code(
+            "for ano, df in dados_por_ano.items():\n",
+            "    df[\"arquivo_origem\"] = ano\n",
+            "\n",
+            "acidentes_prf_historico = pd.concat(\n",
+            "    [dados_por_ano[ano] for ano in ANOS], ignore_index=True\n",
+            ")\n",
+            "print(acidentes_prf_historico.shape)\n",
+        ),
+
+        md("## 1.5 `assert` do total de linhas\n",
+           "\n",
+           "Verificado **antes** da remoção de duplicatas da Parte 2.\n"),
+        code(
+            "soma = sum(len(df) for df in dados_por_ano.values())\n",
+            "assert len(acidentes_prf_historico) == soma\n",
+            "print(f\"{soma:,} linhas = 67.766 + 73.202 + 72.529\")\n",
+            "print(f\"Fatais: {int((acidentes_prf_historico['mortos'] >= 1).sum()):,}\")\n",
+        ),
+    ]
+
+
+# ---------------------------------------------------------------- Parte 2
+def notebook_parte2():
+    return [
+        md("# Parte 2 — Diagnóstico e limpeza\n",
+           "\n",
+           "Diagnóstico da base, conversão de tipos, padronização de textos e remoção das colunas\n",
+           "de localidade fina.\n"),
+
+        md("## 2.0 Setup e reconstrução da base\n",
+           "\n",
+           "Este notebook é autônomo: refaz a leitura da Parte 1 para poder rodar isolado.\n"),
+        SETUP,
+        LER,
+        code(
+            "dados_por_ano = {}\n",
+            "for ano in ANOS:\n",
+            "    df = ler_csv_prf(DIR_BRUTOS / f\"datatran{ano}.csv\")\n",
+            "    df.columns = [normalizar_nome(c) for c in df.columns]\n",
+            "    df[\"arquivo_origem\"] = ano\n",
+            "    dados_por_ano[ano] = df\n",
+            "\n",
+            "acidentes_prf_historico = pd.concat(\n",
+            "    [dados_por_ano[ano] for ano in ANOS], ignore_index=True\n",
+            ")\n",
+            "print(acidentes_prf_historico.shape)\n",
+        ),
+
+        md("## 2.1 Diagnóstico: `info()`, nulos e duplicidades\n"),
+        code(
+            "acidentes_prf_historico.info(memory_usage=\"deep\", show_counts=True)\n",
+        ),
+        code(
+            "nulos = pd.DataFrame({\n",
+            "    \"qtd\": acidentes_prf_historico.isna().sum(),\n",
+            "    \"pct\": acidentes_prf_historico.isna().mean().mul(100).round(3),\n",
+            "}).query(\"qtd > 0\").sort_values(\"qtd\", ascending=False)\n",
+            "display(nulos)\n",
+        ),
+        code(
+            "duplicadas = int(acidentes_prf_historico.duplicated().sum())\n",
+            "df_deduplicado = acidentes_prf_historico.drop_duplicates().copy()\n",
+            "print(f\"Duplicidades exatas: {duplicadas} | linhas removidas: \"\n",
+            "      f\"{len(acidentes_prf_historico) - len(df_deduplicado)}\")\n",
+        ),
+
+        md("## 2.2 Conversão de tipos\n",
+           "\n",
+           "Decimal com vírgula nas numéricas e `data_inversa` em **ISO** (`yyyy-mm-dd`) —\n",
+           "`%d/%m/%Y` viraria tudo `NaT`.\n"),
+        code(
+            "NUMERICAS = [\"br\", \"km\", \"pessoas\", \"mortos\", \"feridos\", \"feridos_leves\",\n",
+            "             \"feridos_graves\", \"ilesos\", \"ignorados\", \"veiculos\",\n",
+            "             \"latitude\", \"longitude\"]\n",
+            "\n",
+            "df_limpo = df_deduplicado.copy()\n",
+            "for coluna in NUMERICAS:\n",
+            "    texto = df_limpo[coluna].astype(\"string\").str.replace(\",\", \".\", regex=False)\n",
+            "    df_limpo[coluna] = pd.to_numeric(texto, errors=\"coerce\")\n",
+            "\n",
+            "df_limpo[\"data_inversa\"] = pd.to_datetime(\n",
+            "    df_limpo[\"data_inversa\"], format=\"%Y-%m-%d\", errors=\"coerce\"\n",
+            ")\n",
+            "\n",
+            "# nenhum valor pode ter virado nulo na conversão\n",
+            "faltando = df_limpo[NUMERICAS + [\"data_inversa\"]].isna().sum()\n",
+            "assert faltando.sum() == 0, f\"Conversão perdeu valores:\\n{faltando[faltando > 0]}\"\n",
+            "print(\"Conversão ok — nenhum valor perdido.\")\n",
+        ),
+
+        md("## 2.3 Verificação de linhas inválidas ou nulas\n",
+           "\n",
+           "Verificação simples: cada coluna categórica é comparada com o domínio esperado.\n",
+           "Linha com valor **nulo** ou **fora do domínio** → `IGNORADO`.\n"),
+        code(
+            "DOMINIOS = {\n",
+            "    \"uf\": {\"AC\",\"AL\",\"AM\",\"AP\",\"BA\",\"CE\",\"DF\",\"ES\",\"GO\",\"MA\",\"MG\",\"MS\",\n",
+            "           \"MT\",\"PA\",\"PB\",\"PE\",\"PI\",\"PR\",\"RJ\",\"RN\",\"RO\",\"RR\",\"RS\",\"SC\",\n",
+            "           \"SE\",\"SP\",\"TO\"},\n",
+            "    \"fase_dia\": {\"Amanhecer\", \"Anoitecer\", \"Plena Noite\", \"Pleno dia\"},\n",
+            "    \"tipo_pista\": {\"Dupla\", \"Múltipla\", \"Simples\"},\n",
+            "    \"uso_solo\": {\"Não\", \"Sim\"},\n",
+            "    \"sentido_via\": {\"Crescente\", \"Decrescente\", \"Não Informado\"},\n",
+            "    \"classificacao_acidente\": {\"Com Vítimas Fatais\", \"Com Vítimas Feridas\", \"Sem Vítimas\"},\n",
+            "    \"dia_semana\": {\"domingo\", \"segunda-feira\", \"terça-feira\", \"quarta-feira\",\n",
+            "                   \"quinta-feira\", \"sexta-feira\", \"sábado\"},\n",
+            "}\n",
+        ),
+        code(
+            "# limpeza de espaços e invisíveis em todas as colunas de texto\n",
+            "ajustadas = 0\n",
+            "for coluna in df_limpo.columns:\n",
+            "    if str(df_limpo[coluna].dtype) in (\"object\", \"string\", \"str\"):\n",
+            "        antes = df_limpo[coluna]\n",
+            "        depois = (antes.astype(\"string\")\n",
+            "                  .str.replace(r\"[\\u00a0\\u200b]\", \" \", regex=True)\n",
+            "                  .str.strip()\n",
+            "                  .str.replace(r\"\\s{2,}\", \" \", regex=True))\n",
+            "        ajustadas += int((antes.notna() & (antes != depois)).sum())\n",
+            "        df_limpo[coluna] = depois\n",
+            "print(f\"Espaços padronizados em {ajustadas} linhas.\")\n",
+        ),
+        code(
+            "# nulo ou fora do domínio -> IGNORADO\n",
+            "correcoes = []\n",
+            "for coluna, dominio in DOMINIOS.items():\n",
+            "    invalidas = df_limpo[coluna].isna() | ~df_limpo[coluna].isin(dominio)\n",
+            "    n_nulos = int(df_limpo[coluna].isna().sum())\n",
+            "    n_invalidos = int(invalidas.sum()) - n_nulos\n",
+            "    df_limpo.loc[invalidas, coluna] = \"IGNORADO\"\n",
+            "    correcoes.append({\"coluna\": coluna, \"nulos\": n_nulos, \"invalidos\": n_invalidos})\n",
+            "\n",
+            "log = pd.DataFrame(correcoes).query(\"nulos > 0 or invalidos > 0\")\n",
+            "display(log if len(log) else \"Nenhuma linha nula ou inválida.\")\n",
+        ),
+        code(
+            "# conferência: nada pode ter sobrado nulo ou inválido\n",
+            "# 'IGNORADO' passa a ser um valor aceito em qualquer categórica\n",
+            "restantes = {\n",
+            "    c: int((df_limpo[c].isna() | ~df_limpo[c].isin(d | {\"IGNORADO\"})).sum())\n",
+            "    for c, d in DOMINIOS.items()\n",
+            "}\n",
+            "assert sum(restantes.values()) == 0, f\"Sobrou valor inválido: {restantes}\"\n",
+            "print(\"OK — nenhuma linha nula ou inválida nas categóricas.\")\n",
+        ),
+        code(
+            "# contagens sem nulo\n",
+            "CONTAGEM = [\"pessoas\", \"mortos\", \"feridos\", \"feridos_leves\",\n",
+            "            \"feridos_graves\", \"ilesos\", \"ignorados\", \"veiculos\"]\n",
+            "for c in CONTAGEM:\n",
+            "    df_limpo[c] = df_limpo[c].fillna(0).astype(\"int64\")\n",
+            "assert df_limpo[CONTAGEM].isna().sum().sum() == 0\n",
+            "print(\"Contagens sem nulo.\")\n",
+        ),
+
+        md("## 2.4 Remoção das colunas de localidade fina\n",
+           "\n",
+           "Saem `latitude`, `longitude`, `regional`, `delegacia`, `uop`. Ficam `uf`, `br`, `municipio`.\n"),
+        code(
+            "REMOVER = [\"latitude\", \"longitude\", \"regional\", \"delegacia\", \"uop\"]\n",
+            "linhas_antes = len(df_limpo)\n",
+            "df_limpo = df_limpo.drop(columns=[c for c in REMOVER if c in df_limpo.columns])\n",
+            "\n",
+            "assert len(df_limpo) == linhas_antes, \"A remoção de colunas alterou o número de linhas\"\n",
+            "assert {\"uf\", \"br\", \"municipio\"} <= set(df_limpo.columns)\n",
+            "print(f\"Colunas: {df_limpo.shape[1]} | Linhas: {len(df_limpo):,}\")\n",
+            "print(sorted(df_limpo.columns))\n",
+        ),
+
+        md("## 2.5 Resumo\n"),
+        code(
+            "print(f\"Linhas preservadas : {len(df_limpo):,}\")\n",
+            "print(f\"Colunas            : {df_limpo.shape[1]}\")\n",
+            "print(f\"Acidentes fatais   : {int((df_limpo['mortos'] >= 1).sum()):,}\")\n",
+            "print(f\"Total de mortos    : {int(df_limpo['mortos'].sum()):,}\")\n",
+        ),
+    ]
+
+
+if __name__ == "__main__":
+    gravar("01_parte1_ingestao.ipynb", notebook_parte1())
+    gravar("02_parte2_limpeza.ipynb", notebook_parte2())

@@ -8,15 +8,18 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 
 ## Status da construção
 
-| Parte | Conteúdo | Situação |
-|---|---|---|
-| 1 | Ingestão e integração | ✅ concluída |
-| 2 | Diagnóstico e limpeza | ⏳ pendente |
-| 3 | Novas variáveis | ⏳ pendente |
-| 4 | Duas bases | ⏳ pendente |
-| 5 | Questões de negócio (Q1–Q12) | ⏳ pendente |
-| 6 | Gráficos | ⏳ pendente |
-| 7 | Síntese | ⏳ pendente |
+| Parte | Conteúdo | Notebook | Situação |
+|---|---|---|---|
+| 1 | Ingestão e integração | `01_parte1_ingestao.ipynb` | ✅ concluída |
+| 2 | Diagnóstico, limpeza e validação de domínio | `02_parte2_limpeza.ipynb` | ✅ concluída |
+| 3 | Novas variáveis | ⏳ | ⏳ pendente |
+| 4 | Duas bases | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio (Q1–Q12) | ⏳ | ⏳ pendente |
+| 6 | Gráficos | ⏳ | ⏳ pendente |
+| 7 | Síntese | ⏳ | ⏳ pendente |
+
+Cada parte tem seu próprio notebook, executável de forma independente com *Restart & Run All*.
+Os notebooks seguem a numeração do exercício.
 
 ## Dados
 
@@ -44,14 +47,19 @@ dados_brutos/
 ```
 .
 ├── dados_brutos/          # CSVs originais (não versionados)
-├── dados_tratados/        # bases geradas pelo notebook
+├── dados_tratados/        # bases geradas pelos notebooks
 ├── notebooks/
-│   └── analise_prf_2023_2025.ipynb
+│   ├── 01_parte1_ingestao.ipynb
+│   └── 02_parte2_limpeza.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
-│   └── build_notebook.py  # gera o .ipynb (fonte da verdade do notebook)
+│   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
 └── README.md
 ```
+
+> Os notebooks são gerados por `tools/build_notebooks.py`. Edite o gerador e rode
+> `python tools/build_notebooks.py` para atualizar os `.ipynb` — assim o código-fonte fica
+> revisável em diff, sem o ruído de JSON de notebook.
 
 ## Como executar
 
@@ -103,6 +111,24 @@ proposital — se divergirem, há registro no arquivo errado.
 
 **5. Duplicidades exatas.** Os três arquivos têm **zero** duplicatas. A remoção da Parte 2.1 é
 executada mesmo assim (o exercício pede), e o notebook reporta "0 removidas" explicitamente.
+
+**6. Verificação de linhas nulas ou inválidas.** A Parte 2.3 compara cada coluna categórica com
+o domínio esperado da PRF (`DOMINIOS`) e substitui por `IGNORADO` toda linha cujo valor seja nulo
+ou esteja fora desse domínio. O notebook registra quantas linhas foram corrigidas em cada coluna
+e reconfere depois que nada sobrou (`assert`). `IGNORADO` é aceito como valor válido na
+reconferência.
+
+## Diagnóstico da base (Parte 2)
+
+| Item | Resultado |
+|---|---|
+| Nulos | `uop` 155 · `delegacia` 91 · `regional` 19 · `classificacao_acidente` 3 |
+| Duplicatas exatas | 0 (remoção executada, 0 removidas) |
+| Espaços duplos corrigidos | 32 (`municipio`) |
+| Linhas nulas/inválidas → `IGNORADO` | 3 (`classificacao_acidente`) |
+| Não-convertidos em numéricas/data | 0 |
+| Colunas após limpeza | 26 (saíram latitude, longitude, regional, delegacia, uop) |
+| Linhas preservadas | 213.497 |
 
 ## Licença e fonte
 
