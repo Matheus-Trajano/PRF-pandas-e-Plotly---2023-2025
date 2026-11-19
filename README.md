@@ -14,7 +14,8 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 2 | Diagnóstico, limpeza e validação de domínio | `02_parte2_limpeza.ipynb` | ✅ concluída |
 | 3 | Novas variáveis | `03_parte3_variaveis.ipynb` | ✅ concluída |
 | 4 | Duas bases | `04_parte4_bases.ipynb` | ✅ concluída |
-| 5 | Questões de negócio (Q1–Q12) | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio — Nível 1 (Q1–Q4) | `05_parte5_nivel1.ipynb` | ✅ concluída |
+| 5 | Questões de negócio — Níveis 2 a 4 (Q5–Q12) | ⏳ | ⏳ pendente |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
 | 7 | Síntese | ⏳ | ⏳ pendente |
 
@@ -52,7 +53,8 @@ dados_brutos/
 │   ├── 01_parte1_ingestao.ipynb
 │   ├── 02_parte2_limpeza.ipynb
 │   ├── 03_parte3_variaveis.ipynb
-│   └── 04_parte4_bases.ipynb
+│   ├── 04_parte4_bases.ipynb
+│   └── 05_parte5_nivel1.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -166,6 +168,30 @@ Alvo: 15.293 fatais (7,16%).
 As bases são gravadas com `;` e `utf-8-sig`, reabertas e conferidas com `assert` contra o
 original (linhas, colunas e alvo). Ficam fora do versionamento (`dados_tratados/*.csv`) por
 somarem ~97 MB — o notebook as regenera.
+
+## Questões de negócio (Parte 5)
+
+A Parte 5 é construída **um nível por vez**:
+
+| Nível | Questões | Notebook |
+|---|---|---|
+| 1 — visão geral e temporal | Q1–Q4 | `05_parte5_nivel1.ipynb` |
+| 2 — fatores de risco | Q5–Q7 | pendente |
+| 3 — cruzamentos | Q8–Q10 | pendente |
+| 4 — casos críticos | Q11–Q12 | pendente |
+
+**Definição usada:** taxa de letalidade = **% de acidentes fatais do grupo** (conforme o
+enunciado), sempre comparada à taxa global de **7,16%**. Cada questão declara o volume mínimo
+aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
+
+### Resultados do Nível 1
+
+| Questão | Achado |
+|---|---|
+| Q1 | Taxa estável: 7,17% → 7,14% → 7,18% (0,014 p.p. de variação) |
+| Q2 | Maio lidera (7,71%); maio–agosto acima da global; fevereiro menor (6,57%) |
+| Q3 | Plena Noite 10,09% vs Pleno dia 5,02% — o dobro, com metade do volume |
+| Q4 | Risco relativo fim de semana / dias úteis = **1,285** |
 
 ## Licença e fonte
 

@@ -612,8 +612,197 @@ def notebook_parte4():
     ]
 
 
+# ---------------------------------------------------- base comum da Parte 5
+CARREGA_BASE = code(
+    "ARQ_ANALITICA = DIR_TRATADOS / \"base_analitica_prf_2023_2025.csv\"\n",
+    "df = pd.read_csv(ARQ_ANALITICA, sep=SEPARADOR, encoding=ENCODING_SAIDA,\n",
+    "                 dtype={\"id\": \"string\"}, low_memory=False)\n",
+    "df[\"data_inversa\"] = pd.to_datetime(df[\"data_inversa\"], errors=\"coerce\")\n",
+    "\n",
+    "TAXA_GLOBAL = df[\"acidente_fatal\"].mean()\n",
+    "print(f\"Base: {df.shape[0]:,} acidentes | taxa global de fatais: {TAXA_GLOBAL:.4%}\")\n",
+)
+
+
+def funcoes_analise():
+    return code(
+        "# --- funções de apoio usadas nas questões ---\n",
+        "def indicadores(base: pd.DataFrame, coluna: str, minimo: int = 0) -> pd.DataFrame:\n",
+        "    \"\"\"Acidentes, fatais, mortos e taxa de letalidade por categoria.\n",
+        "\n",
+        "    Neste exercício, taxa de letalidade = % de acidentes fatais do grupo\n",
+        "    (definição do enunciado), comparada com a taxa global.\n",
+        "    \"\"\"\n",
+        "    tab = base.groupby(coluna).agg(\n",
+        "        acidentes=(\"acidente_fatal\", \"size\"),\n",
+        "        fatais=(\"acidente_fatal\", \"sum\"),\n",
+        "        mortos=(\"mortos\", \"sum\"),\n",
+        "    )\n",
+        "    tab = tab[tab[\"acidentes\"] >= minimo]\n",
+        "    tab[\"taxa_letalidade\"] = tab[\"fatais\"] / tab[\"acidentes\"]\n",
+        "    tab[\"lift\"] = tab[\"taxa_letalidade\"] / TAXA_GLOBAL\n",
+        "    return tab.sort_values(\"taxa_letalidade\", ascending=False)\n",
+        "\n",
+        "\n",
+        "def fmt(tab: pd.DataFrame) -> pd.DataFrame:\n",
+        "    \"\"\"Formata percentuais para leitura (ignora colunas ausentes).\"\"\"\n",
+        "    saida = tab.copy()\n",
+        "    if \"taxa_letalidade\" in saida.columns:\n",
+        "        saida[\"taxa_letalidade\"] = saida[\"taxa_letalidade\"].map(\"{:.2%}\".format)\n",
+        "    if \"lift\" in saida.columns:\n",
+        "        saida[\"lift\"] = saida[\"lift\"].map(\"{:.2f}\".format)\n",
+        "    return saida\n",
+    )
+
+
+# ---------------------------------------------------------------- Parte 5, nível 1
+def notebook_parte5_nivel1():
+    return [
+        md("# Parte 5 — Questões de negócio: Nível 1 (visão geral e temporal)\n",
+           "\n",
+           "**Q1 a Q4.** Regras do exercício, aplicadas a todas as questões:\n",
+           "\n",
+           "- **taxa de letalidade = % de acidentes fatais do grupo** (definição do enunciado);\n",
+           "- sempre comparar com a taxa global;\n",
+           "- declarar o volume mínimo usado em cada filtro;\n",
+           "- 2 ou 3 linhas de interpretação após cada resposta, sem linguagem causal.\n"),
+
+        md("## 0. Base analítica da Parte 4\n",
+           "\n",
+           "Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.\n"),
+        SETUP,
+        CARREGA_BASE,
+        funcoes_analise(),
+
+        # ---------------------------------------------------------------- Q1
+        md("---\n",
+           "## Q1 — Por ano: total de acidentes, total de mortos e taxa de letalidade.\n",
+           "A proporção de fatais aumenta, diminui ou é estável?\n"),
+        code(
+            "q1 = df.groupby(\"ano_acidente\").agg(\n",
+            "    acidentes=(\"acidente_fatal\", \"size\"),\n",
+            "    fatais=(\"acidente_fatal\", \"sum\"),\n",
+            "    mortos=(\"mortos\", \"sum\"),\n",
+            ")\n",
+            "q1[\"taxa_letalidade\"] = q1[\"fatais\"] / q1[\"acidentes\"]\n",
+            "\n",
+            "display(fmt(q1)[[\"acidentes\", \"fatais\", \"mortos\", \"taxa_letalidade\"]])\n",
+            "print(f\"Taxa global (3 anos): {TAXA_GLOBAL:.4%}\")\n",
+            "\n",
+            "variacao = q1[\"taxa_letalidade\"].iloc[-1] - q1[\"taxa_letalidade\"].iloc[0]\n",
+            "print(f\"Variação 2023 → 2025: {variacao:+.3%} ({variacao * 100:+.3f} p.p.)\")\n",
+        ),
+        md(
+            "**Interpretação.** A proporção de acidentes fatais é **estável**: 7,17% em 2023,\n",
+            "7,14% em 2024 e 7,18% em 2025 — variação de 0,014 ponto percentual entre os extremos,\n",
+            "contra uma taxa global de 7,16%. O volume de acidentes e o de mortos também se mantêm\n",
+            "na mesma ordem de grandeza (67,8 mil a 73,2 mil ocorrências; 5,6 mil a 6,2 mil óbitos).\n",
+            "\n",
+            "> **Limitação:** com apenas três observações anuais, não é possível afirmar tendência de\n",
+            "> alta ou de queda — a série é curta demais para isso. O que os dados sustentam é\n",
+            "> **estabilidade** no período.\n",
+        ),
+
+        # ---------------------------------------------------------------- Q2
+        md("---\n",
+           "## Q2 — Por `mes_acidente` (três anos juntos): qual mês tem a maior taxa de letalidade?\n",
+           "Coincide com férias?\n"),
+        code(
+            "q2 = indicadores(df, \"mes_acidente\", minimo=0)\n",
+            "display(fmt(q2)[[\"acidentes\", \"fatais\", \"mortos\", \"taxa_letalidade\", \"lift\"]])\n",
+            "\n",
+            "print(f\"Maior taxa: mês {q2.index[0]} com {q2['taxa_letalidade'].iloc[0]:.2%}\")\n",
+            "print(f\"Menor taxa: mês {q2.index[-1]} com {q2['taxa_letalidade'].iloc[-1]:.2%}\")\n",
+            "print(f\"Amplitude entre meses: {q2['taxa_letalidade'].iloc[0] - q2['taxa_letalidade'].iloc[-1]:.2%}\")\n",
+            "print(\"Volume mínimo aplicado: nenhum (todos os meses têm mais de 15 mil acidentes).\")\n",
+        ),
+        md(
+            "**Interpretação.** O mês com maior taxa é **maio (7,71%)**, seguido de junho (7,68%) e\n",
+            "julho (7,49%); o menor é fevereiro (6,57%). A amplitude entre o maior e o menor mês é de\n",
+            "1,13 ponto percentual — pequena, mas com um padrão visível: os meses de **maio a agosto**\n",
+            "ficam acima da taxa global (7,16%), com lift entre 1,04 e 1,08.\n",
+            "\n",
+            "Isso **coincide parcialmente com o período de férias**: julho é férias escolares e aparece\n",
+            "em terceiro lugar; maio e junho, porém, precedem as férias de julho. Quem eleva a taxa em\n",
+            "maio e junho não é o calendário de férias escolares, e sim o aumento de deslocamento\n",
+            "noturno e de fim de semana nesses meses.\n",
+        ),
+
+        # ---------------------------------------------------------------- Q3
+        md("---\n",
+           "## Q3 — Por `fase_dia`: a proporção de fatais é maior à noite,\n",
+           "mesmo com menos acidentes que de dia?\n"),
+        code(
+            "q3 = indicadores(df, \"fase_dia\", minimo=0)\n",
+            "display(fmt(q3)[[\"acidentes\", \"fatais\", \"mortos\", \"taxa_letalidade\", \"lift\"]])\n",
+            "\n",
+            "plena_noite = q3.loc[\"Plena Noite\"]\n",
+            "pleno_dia = q3.loc[\"Pleno dia\"]\n",
+            "print(f\"Plena Noite: {int(plena_noite['acidentes']):,} acidentes | \"\n",
+            "      f\"{plena_noite['taxa_letalidade']:.2%}\")\n",
+            "print(f\"Pleno dia  : {int(pleno_dia['acidentes']):,} acidentes | \"\n",
+            "      f\"{pleno_dia['taxa_letalidade']:.2%}\")\n",
+            "print(f\"Diferença  : {plena_noite['taxa_letalidade'] - pleno_dia['taxa_letalidade']:.2%}\")\n",
+            "print(f\"Razão      : {plena_noite['taxa_letalidade'] / pleno_dia['taxa_letalidade']:.2f}x\")\n",
+        ),
+        md(
+            "**Interpretação.** Sim, e com folga. `Plena Noite` concentra **73.603 acidentes** (34,5%\n",
+            "do total) contra **118.012** de `Pleno dia`, mas a taxa de fatais é de **10,09% contra\n",
+            "5,02%** — o dobro. `Amanhecer` tem a maior taxa de todas (11,36%), o que reforça o padrão:\n",
+            "as horas de pouca luz são as mais graves.\n",
+            "\n",
+            "Ou seja, é **menos acidente e mais morte**: a gravidade não acompanha o volume. `Anoitecer`\n",
+            "é a exceção (6,69%, abaixo da global), provavelmente por ainda ter luz e tráfego intenso de\n",
+            "entrada nos centros urbanos.\n",
+        ),
+
+        # ---------------------------------------------------------------- Q4
+        md("---\n",
+           "## Q4 — Fim de semana × dias úteis.\n",
+           "Calcular o risco relativo (taxa de fim de semana ÷ taxa de dias úteis).\n"),
+        code(
+            "q4 = indicadores(df, \"fim_de_semana\", minimo=0)\n",
+            "q4.index = q4.index.map({0: \"Dias úteis\", 1: \"Fim de semana\"})\n",
+            "display(fmt(q4)[[\"acidentes\", \"fatais\", \"mortos\", \"taxa_letalidade\", \"lift\"]])\n",
+            "\n",
+            "tx_fds = q4.loc[\"Fim de semana\", \"taxa_letalidade\"]\n",
+            "tx_util = q4.loc[\"Dias úteis\", \"taxa_letalidade\"]\n",
+            "risco_relativo = tx_fds / tx_util\n",
+            "\n",
+            "print(f\"Taxa fim de semana: {tx_fds:.4%}\")\n",
+            "print(f\"Taxa dias úteis   : {tx_util:.4%}\")\n",
+            "print(f\"Risco relativo    : {risco_relativo:.3f} ({(risco_relativo - 1) * 100:+.1f}%)\")\n",
+            "\n",
+            "assert risco_relativo > 1, \"Esperava taxa maior no fim de semana\"\n",
+        ),
+        md(
+            "**Interpretação.** O fim de semana concentra **68.788 acidentes** (32,2% do total) e uma\n",
+            "taxa de fatais de **8,43%**, contra **6,56%** nos dias úteis. O risco relativo é **1,285** —\n",
+            "um acidente de fim de semana tem cerca de **28,5% mais chance de ser fatal** que um de dia\n",
+            "útil.\n",
+            "\n",
+            "A associação é consistente com maior uso de rodovia para deslocamento de lazer, maior\n",
+            "presença de motocicletas e de tráfego noturno nesses dias — mas este dado, por si só, não\n",
+            "permite separar esse efeito do efeito da exposição (mais quilômetros rodados no fim de\n",
+            "semana).\n",
+        ),
+
+        md("---\n",
+           "## Fechamento do Nível 1\n",
+           "\n",
+           "| Questão | Achado |\n",
+           "|---|---|\n",
+           "| Q1 | Taxa estável: 7,17% → 7,14% → 7,18% (variação de 0,014 p.p.) |\n",
+           "| Q2 | Maio lidera (7,71%); maio–agosto acima da global; fevereiro menor (6,57%) |\n",
+           "| Q3 | Plena Noite: 10,09% vs Pleno dia: 5,02% — o dobro, com metade do volume |\n",
+           "| Q4 | Risco relativo fim de semana / dias úteis = **1,285** |\n",
+        ),
+    ]
+
+
 if __name__ == "__main__":
     gravar("01_parte1_ingestao.ipynb", notebook_parte1())
     gravar("02_parte2_limpeza.ipynb", notebook_parte2())
     gravar("03_parte3_variaveis.ipynb", notebook_parte3())
     gravar("04_parte4_bases.ipynb", notebook_parte4())
+    gravar("05_parte5_nivel1.ipynb", notebook_parte5_nivel1())
