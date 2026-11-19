@@ -8,15 +8,18 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 
 ## Status da construção
 
-| Parte | Conteúdo | Situação |
-|---|---|---|
-| 1 | Ingestão e integração | ✅ concluída |
-| 2 | Diagnóstico e limpeza | ⏳ pendente |
-| 3 | Novas variáveis | ⏳ pendente |
-| 4 | Duas bases | ⏳ pendente |
-| 5 | Questões de negócio (Q1–Q12) | ⏳ pendente |
-| 6 | Gráficos | ⏳ pendente |
-| 7 | Síntese | ⏳ pendente |
+| Parte | Conteúdo | Notebook | Situação |
+|---|---|---|---|
+| 1 | Ingestão e integração | `01_parte1_ingestao.ipynb` | ✅ concluída |
+| 2 | Diagnóstico, limpeza e validação de domínio | `02_parte2_limpeza.ipynb` | ✅ concluída |
+| 3 | Novas variáveis | ⏳ | ⏳ pendente |
+| 4 | Duas bases | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio (Q1–Q12) | ⏳ | ⏳ pendente |
+| 6 | Gráficos | ⏳ | ⏳ pendente |
+| 7 | Síntese | ⏳ | ⏳ pendente |
+
+Cada parte tem seu próprio notebook, executável de forma independente com *Restart & Run All*.
+Os notebooks seguem a numeração do exercício.
 
 ## Dados
 
@@ -44,14 +47,19 @@ dados_brutos/
 ```
 .
 ├── dados_brutos/          # CSVs originais (não versionados)
-├── dados_tratados/        # bases geradas pelo notebook
+├── dados_tratados/        # bases geradas pelos notebooks
 ├── notebooks/
-│   └── analise_prf_2023_2025.ipynb
+│   ├── 01_parte1_ingestao.ipynb
+│   └── 02_parte2_limpeza.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
-│   └── build_notebook.py  # gera o .ipynb (fonte da verdade do notebook)
+│   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
 └── README.md
 ```
+
+> Os notebooks são gerados por `tools/build_notebooks.py`. Edite o gerador e rode
+> `python tools/build_notebooks.py` para atualizar os `.ipynb` — assim o código-fonte fica
+> revisável em diff, sem o ruído de JSON de notebook.
 
 ## Como executar
 
@@ -103,6 +111,32 @@ proposital — se divergirem, há registro no arquivo errado.
 
 **5. Duplicidades exatas.** Os três arquivos têm **zero** duplicatas. A remoção da Parte 2.1 é
 executada mesmo assim (o exercício pede), e o notebook reporta "0 removidas" explicitamente.
+
+**6. Classificador de domínio em vez de substituição cega.** A Parte 2.3 padroniza textos. Em vez
+de aplicar `IGNORADO` só nos nulos, foi implementada a função `validar_e_corrigir_dominio`, que
+confere cada coluna categórica contra o dicionário da PRF e classifica a correção em três motivos:
+`nulo → IGNORADO`, `forma normalizada` (diferença só de caixa/acento) e `fora do domínio →
+IGNORADO`. Toda substituição fica registrada num log. O notebook inclui um **teste com valores
+inválidos injetados** para demonstrar que o validador realmente acusa problemas — um validador
+que nunca falha não é verificação.
+
+**7. Colunas de texto em pandas 3.** Colunas de texto passaram a ter dtype `str` (antes `object`).
+Código que testa `dtype == "object"` — como o do Módulo 04 — **silenciosamente não processa nada**
+em pandas 3. Aqui a detecção aceita `object`, `string` e `str`.
+
+## Diagnóstico da base (Parte 2)
+
+| Item | Resultado |
+|---|---|
+| Nulos | `uop` 155 · `delegacia` 91 · `regional` 19 · `classificacao_acidente` 3 |
+| Duplicatas exatas | 0 |
+| Duplicatas de `(arquivo_origem, id)` | 0 |
+| IDs não numéricos | 1 (`6e+05`, em 2024) |
+| Espaços duplos corrigidos | 32 (`municipio`) |
+| Nulos de categoria → `IGNORADO` | 3 (`classificacao_acidente`) |
+| Valores fora do domínio | 0 |
+| Não-convertidos em numéricas/data | 0 |
+| Colunas após limpeza | 26 (saíram latitude, longitude, regional, delegacia, uop) |
 
 ## Licença e fonte
 
