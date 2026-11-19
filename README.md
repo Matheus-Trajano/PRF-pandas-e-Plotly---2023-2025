@@ -15,7 +15,8 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 3 | Novas variáveis | `03_parte3_variaveis.ipynb` | ✅ concluída |
 | 4 | Duas bases | `04_parte4_bases.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 1 (Q1–Q4) | `05_parte5_nivel1.ipynb` | ✅ concluída |
-| 5 | Questões de negócio — Níveis 2 a 4 (Q5–Q12) | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio — Nível 2 (Q5–Q7) | `06_parte5_nivel2.ipynb` | ✅ concluída |
+| 5 | Questões de negócio — Níveis 3 e 4 (Q8–Q12) | ⏳ | ⏳ pendente |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
 | 7 | Síntese | ⏳ | ⏳ pendente |
 
@@ -54,7 +55,8 @@ dados_brutos/
 │   ├── 02_parte2_limpeza.ipynb
 │   ├── 03_parte3_variaveis.ipynb
 │   ├── 04_parte4_bases.ipynb
-│   └── 05_parte5_nivel1.ipynb
+│   ├── 05_parte5_nivel1.ipynb
+│   └── 06_parte5_nivel2.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -176,7 +178,7 @@ A Parte 5 é construída **um nível por vez**:
 | Nível | Questões | Notebook |
 |---|---|---|
 | 1 — visão geral e temporal | Q1–Q4 | `05_parte5_nivel1.ipynb` |
-| 2 — fatores de risco | Q5–Q7 | pendente |
+| 2 — fatores de risco | Q5–Q7 | `06_parte5_nivel2.ipynb` |
 | 3 — cruzamentos | Q8–Q10 | pendente |
 | 4 — casos críticos | Q11–Q12 | pendente |
 
@@ -192,6 +194,14 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 | Q2 | Maio lidera (7,71%); maio–agosto acima da global; fevereiro menor (6,57%) |
 | Q3 | Plena Noite 10,09% vs Pleno dia 5,02% — o dobro, com metade do volume |
 | Q4 | Risco relativo fim de semana / dias úteis = **1,285** |
+
+### Resultados do Nível 2
+
+| Questão | Achado |
+|---|---|
+| Q5 | Colisão frontal (lift 4,16) e atropelamento de pedestre (lift 4,04) — 45% dos fatais |
+| Q6 | Top 5 dominado por pedestre e contramão; álcool no pedestre 2,25 vs **álcool no condutor 0,63** |
+| Q7 | Curva 8,19% > reta 7,35%, mas ponte (10,75%) e declive (9,85%) são piores; explode declarado como não-partição |
 
 ## Licença e fonte
 
