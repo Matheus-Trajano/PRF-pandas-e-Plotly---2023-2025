@@ -112,31 +112,23 @@ proposital — se divergirem, há registro no arquivo errado.
 **5. Duplicidades exatas.** Os três arquivos têm **zero** duplicatas. A remoção da Parte 2.1 é
 executada mesmo assim (o exercício pede), e o notebook reporta "0 removidas" explicitamente.
 
-**6. Classificador de domínio em vez de substituição cega.** A Parte 2.3 padroniza textos. Em vez
-de aplicar `IGNORADO` só nos nulos, foi implementada a função `validar_e_corrigir_dominio`, que
-confere cada coluna categórica contra o dicionário da PRF e classifica a correção em três motivos:
-`nulo → IGNORADO`, `forma normalizada` (diferença só de caixa/acento) e `fora do domínio →
-IGNORADO`. Toda substituição fica registrada num log. O notebook inclui um **teste com valores
-inválidos injetados** para demonstrar que o validador realmente acusa problemas — um validador
-que nunca falha não é verificação.
-
-**7. Colunas de texto em pandas 3.** Colunas de texto passaram a ter dtype `str` (antes `object`).
-Código que testa `dtype == "object"` — como o do Módulo 04 — **silenciosamente não processa nada**
-em pandas 3. Aqui a detecção aceita `object`, `string` e `str`.
+**6. Verificação de linhas nulas ou inválidas.** A Parte 2.3 compara cada coluna categórica com
+o domínio esperado da PRF (`DOMINIOS`) e substitui por `IGNORADO` toda linha cujo valor seja nulo
+ou esteja fora desse domínio. O notebook registra quantas linhas foram corrigidas em cada coluna
+e reconfere depois que nada sobrou (`assert`). `IGNORADO` é aceito como valor válido na
+reconferência.
 
 ## Diagnóstico da base (Parte 2)
 
 | Item | Resultado |
 |---|---|
 | Nulos | `uop` 155 · `delegacia` 91 · `regional` 19 · `classificacao_acidente` 3 |
-| Duplicatas exatas | 0 |
-| Duplicatas de `(arquivo_origem, id)` | 0 |
-| IDs não numéricos | 1 (`6e+05`, em 2024) |
+| Duplicatas exatas | 0 (remoção executada, 0 removidas) |
 | Espaços duplos corrigidos | 32 (`municipio`) |
-| Nulos de categoria → `IGNORADO` | 3 (`classificacao_acidente`) |
-| Valores fora do domínio | 0 |
+| Linhas nulas/inválidas → `IGNORADO` | 3 (`classificacao_acidente`) |
 | Não-convertidos em numéricas/data | 0 |
 | Colunas após limpeza | 26 (saíram latitude, longitude, regional, delegacia, uop) |
+| Linhas preservadas | 213.497 |
 
 ## Licença e fonte
 
