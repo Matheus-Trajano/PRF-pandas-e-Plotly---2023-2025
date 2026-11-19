@@ -12,7 +12,7 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 |---|---|---|---|
 | 1 | Ingestão e integração | `01_parte1_ingestao.ipynb` | ✅ concluída |
 | 2 | Diagnóstico, limpeza e validação de domínio | `02_parte2_limpeza.ipynb` | ✅ concluída |
-| 3 | Novas variáveis | ⏳ | ⏳ pendente |
+| 3 | Novas variáveis | `03_parte3_variaveis.ipynb` | ✅ concluída |
 | 4 | Duas bases | ⏳ | ⏳ pendente |
 | 5 | Questões de negócio (Q1–Q12) | ⏳ | ⏳ pendente |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
@@ -50,7 +50,8 @@ dados_brutos/
 ├── dados_tratados/        # bases geradas pelos notebooks
 ├── notebooks/
 │   ├── 01_parte1_ingestao.ipynb
-│   └── 02_parte2_limpeza.ipynb
+│   ├── 02_parte2_limpeza.ipynb
+│   └── 03_parte3_variaveis.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -129,6 +130,26 @@ reconferência.
 | Não-convertidos em numéricas/data | 0 |
 | Colunas após limpeza | 26 (saíram latitude, longitude, regional, delegacia, uop) |
 | Linhas preservadas | 213.497 |
+
+## Variáveis derivadas (Parte 3)
+
+| Variável | Regra |
+|---|---|
+| `acidente_fatal` | 1 se `mortos >= 1`, senão 0 |
+| `ano_acidente`, `mes_acidente` | extraídos de `data_inversa` |
+| `fim_de_semana` | 1 se sábado ou domingo (`dt.day_of_week`) |
+| `data_comemorativa` | Fim de Ano (20/12–02/01) · Carnaval (janelas por ano) · Normal |
+| `faixa_horaria` | blocos de 3h: `00h-03h` … `21h-24h`, fechado no início |
+
+`df_enriquecido`: 213.497 linhas × 32 colunas · 15.293 acidentes fatais (7,16%) · zero violações da regra do alvo.
+
+### Janelas usadas
+
+| Período | Intervalo | Dias | Acidentes |
+|---|---|---|---|
+| Fim de Ano | 20/12 a 02/01 | 42 | 8.863 |
+| Carnaval | 18–22/02/2023 · 10–14/02/2024 · 01–05/03/2025 | 15 | 2.897 |
+| Normal | restante | 1.039 | 201.737 |
 
 ## Licença e fonte
 
