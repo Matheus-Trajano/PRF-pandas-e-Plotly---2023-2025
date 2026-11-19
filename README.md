@@ -13,7 +13,7 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 1 | Ingestão e integração | `01_parte1_ingestao.ipynb` | ✅ concluída |
 | 2 | Diagnóstico, limpeza e validação de domínio | `02_parte2_limpeza.ipynb` | ✅ concluída |
 | 3 | Novas variáveis | `03_parte3_variaveis.ipynb` | ✅ concluída |
-| 4 | Duas bases | ⏳ | ⏳ pendente |
+| 4 | Duas bases | `04_parte4_bases.ipynb` | ✅ concluída |
 | 5 | Questões de negócio (Q1–Q12) | ⏳ | ⏳ pendente |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
 | 7 | Síntese | ⏳ | ⏳ pendente |
@@ -51,7 +51,8 @@ dados_brutos/
 ├── notebooks/
 │   ├── 01_parte1_ingestao.ipynb
 │   ├── 02_parte2_limpeza.ipynb
-│   └── 03_parte3_variaveis.ipynb
+│   ├── 03_parte3_variaveis.ipynb
+│   └── 04_parte4_bases.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -150,6 +151,21 @@ reconferência.
 | Fim de Ano | 20/12 a 02/01 | 42 | 8.863 |
 | Carnaval | 18–22/02/2023 · 10–14/02/2024 · 01–05/03/2025 | 15 | 2.897 |
 | Normal | restante | 1.039 | 201.737 |
+
+## As duas bases (Parte 4)
+
+| Base | Linhas | Colunas | Uso |
+|---|---|---|---|
+| `base_analitica_prf_2023_2025.csv` | 213.497 | 32 | EDA, gráficos, Power BI |
+| `base_modelavel_prf_2023_2025.csv` | 213.497 | 27 | modelagem, sem vazamento |
+
+`base_modelavel` exclui as 5 colunas proibidas pelo exercício: `mortos`, `feridos`,
+`feridos_leves`, `feridos_graves` e `classificacao_acidente`. Zero nulos.
+Alvo: 15.293 fatais (7,16%).
+
+As bases são gravadas com `;` e `utf-8-sig`, reabertas e conferidas com `assert` contra o
+original (linhas, colunas e alvo). Ficam fora do versionamento (`dados_tratados/*.csv`) por
+somarem ~97 MB — o notebook as regenera.
 
 ## Licença e fonte
 
