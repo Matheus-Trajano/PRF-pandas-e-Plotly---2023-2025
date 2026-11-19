@@ -1,0 +1,16 @@
+# Dados de origem (não versionados — ver README, seção "Dados")
+dados_brutos/
+google_drive/
+*.zip
+
+# Saídas geradas pelo notebook (reproduzíveis por Restart & Run All)
+resultados/*
+!resultados/.gitkeep
+
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.DS_Store
