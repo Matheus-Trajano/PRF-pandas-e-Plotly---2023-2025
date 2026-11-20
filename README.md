@@ -19,7 +19,7 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 5 | Questões de negócio — Nível 3 (Q8–Q10) | `07_parte5_nivel3.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 4 (Q11–Q12) | `08_parte5_nivel4.ipynb` | ✅ concluída |
 | 6 | Gráficos | `09_parte6_graficos.ipynb` | ✅ concluída |
-| 7 | Síntese | ⏳ | ⏳ pendente |
+| 7 | Síntese | `10_parte7_sintese.ipynb` | ✅ concluída |
 
 Cada parte tem seu próprio notebook, executável de forma independente com *Restart & Run All*.
 Os notebooks seguem a numeração do exercício.
@@ -60,7 +60,8 @@ dados_brutos/
 │   ├── 06_parte5_nivel2.ipynb
 │   ├── 07_parte5_nivel3.ipynb
 │   ├── 08_parte5_nivel4.ipynb
-│   └── 09_parte6_graficos.ipynb
+│   ├── 09_parte6_graficos.ipynb
+│   └── 10_parte7_sintese.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -269,6 +270,33 @@ volume e gravidade é justamente o que o exercício pede que se enxergue.
 
 `resultados/` **não é versionado** (`.gitignore`): o notebook regenera os arquivos a cada
 execução. O HTML é **autocontido** (abre offline); o PNG depende do Chrome e é opcional.
+
+## Síntese (Parte 7)
+
+`notebooks/10_parte7_sintese.ipynb` — **três achados**, cada um com observação, tabela ou
+gráfico onde aparece, comparação com a taxa global, hipótese e limitação. Todo número é
+recalculado no notebook, a partir da base analítica.
+
+| # | Achado | Observação | Onde | vs taxa global | Limitação |
+|---|---|---|---|---|---|
+| 1 | Colisão frontal e atropelamento de pedestre concentram a letalidade | 29,81% e 28,96%: 11,05% dos acidentes, **45,47% dos fatais** | Gráfico 1 + Q5/Q6 | lift **4,16** e **4,04** | classificação do BO, subnotificação, sem velocidade |
+| 2 | A madrugada tem a taxa mais alta e o volume mais baixo | 03h–06h: 6,9% dos acidentes e **11,9% dos fatais**; 2,50× a faixa mais segura | Gráfico 3 + Q3 | lift **1,71** (mais segura: 0,69) | `horario` é o do registro, sem exposição por km |
+| 3 | O problema é de geometria de via, não de sazonalidade | Pista Simples 9,89% contra Dupla 4,71%; contramão 6,1× mais frequente; 36 meses sem tendência | Gráfico 2 + Q8/Q11 | lift **1,38** (Dupla: 0,66) | `tipo_pista` é proxy, confundido com a BR |
+
+**Categoria descartada pelo filtro de volume:** `Participar de racha` — 52 acidentes, 13
+fatais, **25,00% de letalidade (lift 3,49)**. Não passa do corte de 100 acidentes da Q6 e,
+sem o filtro, ocuparia a **6ª posição** por lift, logo atrás do top 5 (lift 3,60). O mesmo
+custo se repete nos outros filtros: `Sinistro pessoal de trânsito` (20 acidentes, 15,00%,
+lift 2,09) seria o 3º colocado entre os tipos de acidente; `Túnel` (125) sai da Q7; 36
+das 119 BRs saem da Q9; 64 dos 90 municípios de PE saem da Q12; e 6 células de pista ×
+clima (Granizo e Neve, 0 a 3 registros) ficam fora da Q8.
+
+O **gráfico de síntese** (`resultados/g4_sintese_achados.html`) junta os três achados em
+uma escala só — o lift de cada grupo contra a linha da taxa global — com dois contraponto
+(`Contramão`, lift 4,04; `Faixa 09h–12h`, lift 0,69).
+
+Nenhum dos três achados é uma explicação causal: são leituras de **concentração**, com
+hipótese e limitação explicitadas.
 
 ## Licença e fonte
 
