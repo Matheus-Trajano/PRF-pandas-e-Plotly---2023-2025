@@ -18,7 +18,7 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 5 | Questões de negócio — Nível 2 (Q5–Q7) | `06_parte5_nivel2.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 3 (Q8–Q10) | `07_parte5_nivel3.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 4 (Q11–Q12) | `08_parte5_nivel4.ipynb` | ✅ concluída |
-| 6 | Gráficos | ⏳ | ⏳ pendente |
+| 6 | Gráficos | `09_parte6_graficos.ipynb` | ✅ concluída |
 | 7 | Síntese | ⏳ | ⏳ pendente |
 
 Cada parte tem seu próprio notebook, executável de forma independente com *Restart & Run All*.
@@ -59,7 +59,8 @@ dados_brutos/
 │   ├── 05_parte5_nivel1.ipynb
 │   ├── 06_parte5_nivel2.ipynb
 │   ├── 07_parte5_nivel3.ipynb
-│   └── 08_parte5_nivel4.ipynb
+│   ├── 08_parte5_nivel4.ipynb
+│   └── 09_parte6_graficos.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -74,12 +75,17 @@ dados_brutos/
 
 ```bash
 pip install pandas numpy plotly jupyter
-jupyter notebook notebooks/analise_prf_2023_2025.ipynb
+jupyter notebook notebooks/09_parte6_graficos.ipynb
 ```
 
-Execute **Restart & Run All**. O notebook resolve a raiz do projeto por `Path`, então roda
-tanto aberto da raiz do repositório quanto de dentro de `notebooks/`. Nenhum CSV original é
-sobrescrito.
+Cada parte é um notebook próprio: abra o da parte que quer rodar e use **Restart & Run All**.
+O notebook resolve a raiz do projeto por `Path`, então roda tanto aberto da raiz do
+repositório quanto de dentro de `notebooks/`. Nenhum CSV original é sobrescrito.
+
+Ordem de execução: as Partes 1 a 4 precisam de `dados_brutos/`; a Parte 4 gera as bases em
+`dados_tratados/`; as Partes 5 e 6 leem essas bases. Para o **PNG** dos gráficos é preciso
+`pip install kaleido` **e** o Chrome instalado — sem eles o notebook da Parte 6 salva só o
+HTML e avisa no output, sem falhar.
 
 ## Números de controle
 
@@ -244,6 +250,25 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 |---|---|
 | Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; **MG lidera** (75 acidentes, 303 mortos, 27 UFs); principal causa: contramão (27,0%); colisão frontal 62,9% (razão 2,27); pista Simples 88,6% |
 | Q12 | Top 5 de PE 2024–2025 por **acidentes fatais**: Recife (45), Garanhuns (24), Jaboatão (24), Caruaru (24), Petrolina (23) — 23,7% dos fatais de PE; mesmo conjunto no ranking por mortos; SALOA (13 acidentes, 20 mortos) fica de fora pelo volume mínimo |
+
+## Gráficos (Parte 6)
+
+Três gráficos Plotly em `resultados/`. Cada um responde a uma pergunta escrita na célula de
+texto imediatamente acima, tem a **mensagem principal no título** e uma **legenda de 2 linhas**
+com o que está sendo medido e como ler.
+
+| Gráfico | Pergunta | Mensagem principal | Arquivo |
+|---|---|---|---|
+| 1 | Que tipos de acidente elevam a chance de morte? | Frontal (29,81%) e atropelamento de pedestre (28,96%) têm taxa **4× a global**; volume mínimo de 100 acidentes | `g1_taxa_por_tipo_acidente.html` |
+| 2 | A taxa de letalidade varia ao longo dos 36 meses? | Oscila só **1,92 p.p.** (6,36% a 8,28%) e **sem tendência** — 12 primeiros e 12 últimos meses com a mesma média | `g2_serie_mensal.html` |
+| 3 | Que horas do dia concentram os acidentes fatais? | **03h–06h** tem a taxa mais alta (12,26%), 2,5× a mais segura, com apenas 6,9% dos acidentes | `g3_faixa_horaria.html` |
+
+Os gráficos 2 e 3 combinam **volume em barras** (eixo à direita) e **taxa de letalidade em
+linha** (eixo à esquerda), com a taxa global marcada por tracejado — a separação entre
+volume e gravidade é justamente o que o exercício pede que se enxergue.
+
+`resultados/` **não é versionado** (`.gitignore`): o notebook regenera os arquivos a cada
+execução. O HTML é **autocontido** (abre offline); o PNG depende do Chrome e é opcional.
 
 ## Licença e fonte
 
