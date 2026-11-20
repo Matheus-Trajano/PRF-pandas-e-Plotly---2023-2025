@@ -17,7 +17,7 @@ do Módulo 03, com as práticas dos Módulos 04 e 05.
 | 5 | Questões de negócio — Nível 1 (Q1–Q4) | `05_parte5_nivel1.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 2 (Q5–Q7) | `06_parte5_nivel2.ipynb` | ✅ concluída |
 | 5 | Questões de negócio — Nível 3 (Q8–Q10) | `07_parte5_nivel3.ipynb` | ✅ concluída |
-| 5 | Questões de negócio — Nível 4 (Q11–Q12) | ⏳ | ⏳ pendente |
+| 5 | Questões de negócio — Nível 4 (Q11–Q12) | `08_parte5_nivel4.ipynb` | ✅ concluída |
 | 6 | Gráficos | ⏳ | ⏳ pendente |
 | 7 | Síntese | ⏳ | ⏳ pendente |
 
@@ -58,7 +58,8 @@ dados_brutos/
 │   ├── 04_parte4_bases.ipynb
 │   ├── 05_parte5_nivel1.ipynb
 │   ├── 06_parte5_nivel2.ipynb
-│   └── 07_parte5_nivel3.ipynb
+│   ├── 07_parte5_nivel3.ipynb
+│   └── 08_parte5_nivel4.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
 │   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
@@ -182,7 +183,7 @@ A Parte 5 é construída **um nível por vez**:
 | 1 — visão geral e temporal | Q1–Q4 | `05_parte5_nivel1.ipynb` |
 | 2 — fatores de risco | Q5–Q7 | `06_parte5_nivel2.ipynb` |
 | 3 — cruzamentos | Q8–Q10 | `07_parte5_nivel3.ipynb` |
-| 4 — casos críticos | Q11–Q12 | pendente |
+| 4 — casos críticos | Q11–Q12 | `08_parte5_nivel4.ipynb` |
 
 **Definição usada:** taxa de letalidade = **% de acidentes fatais do grupo** (conforme o
 enunciado), sempre comparada à taxa global de **7,16%**. Cada questão declara o volume mínimo
@@ -212,6 +213,13 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 | Q8 | Letalidade quase igual nos três períodos (6,63%–7,40%); Fim de Ano tem +8,7% acidentes/dia e +25% mortos/dia; Carnaval não se distingue de dia normal |
 | Q9 | Pista Simples (9,83%) mais que dobra a Dupla (4,69%) em **7 de 7** condições; pior célula Simples+Nevoeiro (13,95%); chuva com lift 0,86 |
 | Q10 | Por **mortos**: BR-116 (1.190) e BR-101 (1.076); top 10 = 52,4% das mortes noturnas; só a BR-316 aparece também no ranking por taxa |
+
+### Resultados do Nível 4
+
+| Questão | Achado |
+|---|---|
+| Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; colisão frontal 62,9% (razão 2,27) e contramão + ultrapassagem = 42,1%; pista Simples 88,6% |
+| Q12 | Top 5 de PE 2024–2025 por mortos: Recife (47), Garanhuns (27), Jaboatão (25), Petrolina (25), Caruaru (25) — 23,0% das mortes; ranking estável por mortos e por fatais; SALOA (13 acidentes, 20 mortos) fica de fora pelo volume mínimo |
 
 ## Licença e fonte
 
