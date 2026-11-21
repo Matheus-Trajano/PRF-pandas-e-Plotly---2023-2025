@@ -714,7 +714,8 @@ def notebook_parte5_nivel1():
         # ---------------------------------------------------------------- Q1
         md("---\n",
            "## Q1 — Por ano: total de acidentes, total de mortos e taxa de letalidade.\n",
-           "**Qual** é a proporção de fatais em cada ano — aumenta, diminui ou é estável?\n"),
+           "**Qual** é a proporção de fatais em cada ano — aumenta, diminui ou é estável?\n",
+           "Volume mínimo: não se aplica — todos os anos da base (67.766 a 73.202 acidentes).\n"),
         code(
             "q1 = df.groupby(\"ano_acidente\").agg(\n",
             "    acidentes=(\"acidente_fatal\", \"size\"),\n",
@@ -733,7 +734,8 @@ def notebook_parte5_nivel1():
             "**Interpretação.** A proporção de fatais é **estável**: 7,17% (2023), 7,14% (2024) e\n",
             "7,18% (2025) — variação de **+0,015 p.p.** entre os extremos, contra a taxa global de\n",
             "7,16%. Acidentes (67,8–73,2 mil) e mortos (5,6–6,2 mil) mantêm a mesma ordem de grandeza.\n",
-            "\n",
+        ),
+        md(
             "> **Limitação:** com apenas três observações anuais, não é possível afirmar tendência de\n",
             "> alta ou de queda — a série é curta demais para isso. O que os dados sustentam é\n",
             "> **estabilidade** no período.\n",
@@ -804,11 +806,10 @@ def notebook_parte5_nivel1():
             "assert risco_relativo > 1, \"Esperava taxa maior no fim de semana\"\n",
         ),
         md(
-            "**Interpretação.** O fim de semana tem **8,43%** de fatais (68.788 acidentes) contra **6,56%**\n",
-            "dos dias úteis — risco relativo **1,285**, ou 28,5% mais chance de ser fatal. A diferença\n",
-            "está **associado a** um padrão que se repete a cada fim de semana, e este dado não separa o\n",
-            "efeito das características dos acidentes do efeito da exposição (mais quilômetros rodados no\n",
-            "fim de semana).\n",
+            "**Interpretação.** O fim de semana tem **8,43%** de fatais (68.788 acidentes), acima da\n",
+            "global de **7,16%**, contra **6,56%** dos dias úteis — risco relativo **1,285**. A diferença\n",
+            "está **associada a** um padrão que se repete a cada fim de semana, e o dado não separa o\n",
+            "efeito das características dos acidentes do efeito da exposição (mais quilômetros rodados).\n",
         ),
 
         md("---\n",
@@ -1085,8 +1086,8 @@ def notebook_parte5_nivel3():
         ),
         md(
             "**Interpretação.** O **tipo de pista domina o resultado**; o clima é secundário. Pista\n",
-            "**Simples** tem **9,83%** de letalidade contra **4,69%** na Dupla — **mais que o dobro** — e\n",
-            "taxa maior que a Dupla nas **7 de 7** condições com volume suficiente. A pior combinação é\n",
+            "**Simples** tem **9,83%** de letalidade — acima da global de **7,16%** (lift 1,37) — contra\n",
+            "**4,69%** na Dupla, maior nas **7 de 7** condições comparáveis. A pior combinação é\n",
             "**Simples + Nevoeiro/Neblina: 13,95%**. Volume mínimo: **50 por célula** (21 de 27 válidas).\n",
         ),
         md(
@@ -1139,7 +1140,8 @@ def notebook_parte5_nivel3():
             "**Interpretação.** Ordenando por **mortos**, o top 10 é dominado por **BR-116** (1.190 mortos\n",
             "em 11.724 acidentes noturnos) e **BR-101** (1.076 em 12.533), que juntas respondem por **2.266\n",
             "dos 8.535** mortos noturnos (26,5%); o top 10 completo concentra **52,4%** das mortes à noite.\n",
-            "Volume mínimo: **50 acidentes noturnos** na rodovia (83 das 119 BRs noturnas passam).\n",
+            "Só a **BR-316** tem taxa acima da global (20,47%, lift 2,86). Volume mínimo: **50 acidentes\n",
+            "noturnos** por rodovia (83 das 119 BRs noturnas passam).\n",
         ),
         md(
             "| BR | Acidentes | Mortos | Taxa | Mortos/100 ac. |\n",
@@ -1261,7 +1263,9 @@ def notebook_parte5_nivel4():
         # ---------------------------------------------------------------- Q11
         md("---\n",
            "## Q11 — Acidentes críticos: 3 ou mais mortos.\n",
-           "Quantos são, **qual UF lidera** e qual a principal causa? O perfil completo vem a seguir.\n"),
+           "Quantos são, **qual UF lidera** e qual a principal causa? O perfil completo vem a seguir.\n",
+           "Volume mínimo: não se aplica — o filtro é o critério do enunciado (3 ou mais mortos),\n",
+           "sem corte de volume: os **437** acidentes atendem ao critério.\n"),
         code(
             "criticos = df[df[\"mortos\"] >= 3].copy()\n",
             "fatais = df[df[\"acidente_fatal\"] == 1]\n",
@@ -1397,9 +1401,10 @@ def notebook_parte5_nivel4():
         ),
         md(
             "**Interpretação.** Os acidentes críticos são **raros e concentrados**: 437 ocorrências\n",
-            "(0,205% da base) que respondem por 2,86% dos acidentes fatais, mas por **9,36% de todas as\n",
-            "mortes**. A **UF que mais concentra** é **Minas Gerais** — 75 acidentes (17,2%) e **303 das 1.669\n",
-            "mortes** (18,2%) — e a principal causa é **transitar na contramão** (27,0% dos críticos).\n",
+            "(0,205% da base) — **100% fatais por construção, contra 7,16% da global** — que respondem por\n",
+            "2,86% dos acidentes fatais, mas por **9,36% de todas as mortes**. A **UF que mais concentra** é\n",
+            "**Minas Gerais** — 75 acidentes (17,2%) e **303 das 1.669 mortes** (18,2%) — e a principal causa\n",
+            "é **transitar na contramão** (27,0% dos críticos).\n",
         ),
         md(
             "**Detalhamento.** A distribuição é assimétrica: 266 acidentes com 3 mortos, 104 com 4 e apenas\n",
@@ -1416,7 +1421,7 @@ def notebook_parte5_nivel4():
             "A concentração por rodovia é forte: **69 BRs** registraram acidentes críticos e as 10\n",
             "primeiras concentram **49,2%** das mortes críticas, com BR-116, BR-101 e BR-163 na frente. Por\n",
             "município a dispersão é grande — os 437 acidentes se distribuem por **334 municípios** — o que\n",
-            "mostra que a concentração crítica está **associado a** rodovia, não a localidade.\n",
+            "mostra que a concentração crítica está **associada a** rodovia, não a localidade.\n",
         ),
         md(
             "> **Ressalva:** o maior evento do período — colisão lateral sentido oposto em TEOFILO OTONI\n",
@@ -1497,17 +1502,18 @@ def notebook_parte5_nivel4():
         ),
         md(
             "**Interpretação.** Em PE, no biênio 2024–2025, houve **6.245 acidentes**, 590 fatais e\n",
-            "**649 mortos**. O top 5 por **acidentes fatais** — o critério do enunciado — é **RECIFE (45)**,\n",
-            "**GARANHUNS (24)**, **JABOATAO DOS GUARARAPES (24)**, **CARUARU (24)** e **PETROLINA (23)**:\n",
-            "**140 acidentes fatais**, 23,7% dos de PE. Volume mínimo: **50 acidentes** (90 municípios, 64\n",
-            "excluídos). O mesmo conjunto sai pelo ranking por **mortos** (149 mortes, 23,0%).\n",
+            "**649 mortos** — taxa de **9,45%**, acima da global de **7,16%**. O top 5 por **acidentes\n",
+            "fatais** — o critério do enunciado — é **RECIFE (45)**, **GARANHUNS (24)**, **JABOATAO DOS\n",
+            "GUARARAPES (24)**, **CARUARU (24)** e **PETROLINA (23)**: **140 acidentes fatais**, 23,7% dos de\n",
+            "PE. Volume mínimo: **50 acidentes** (90 municípios, 64 excluídos).\n",
         ),
         md(
-            "**Detalhamento.** O que separa o grupo é a **intensidade**, não o volume: o resultado está\n",
-            "**associado a** Garanhuns (**12,90%** de taxa de letalidade), enquanto Recife fica em **3,53%**.\n",
-            "Entre os municípios que passam\n",
-            "do filtro, os de taxa mais alta são Pesqueira (31,37%), Araripina (27,59%) e Paudalho (21,33%) —\n",
-            "todos com menos de 80 acidentes, o que torna a taxa instável.\n",
+            "**Detalhamento.** O mesmo conjunto sai pelo ranking por **mortos** (149 mortes, 23,0% das\n",
+            "mortes de PE), então a resposta não muda: o ranking é o mesmo pelos dois critérios. O que\n",
+            "separa o grupo é a **intensidade**, não o volume: o resultado está **associado a** Garanhuns\n",
+            "(**12,90%** de taxa de letalidade), enquanto Recife fica em **3,53%**. Entre os municípios que\n",
+            "passam do filtro, os de taxa mais alta são Pesqueira (31,37%), Araripina (27,59%) e Paudalho\n",
+            "(21,33%) — todos com menos de 80 acidentes, o que torna a taxa instável.\n",
         ),
         md(
             "> **Ressalva metodológica.** O critério de volume mínimo exclui SALOA, que tem 13 acidentes e\n",
