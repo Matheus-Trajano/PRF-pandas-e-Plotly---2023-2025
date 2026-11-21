@@ -173,7 +173,8 @@ No recorte mais agregado de `fase_dia`, Plena Noite (10,09%) contra Pleno dia (5
 
 **Comparação com a taxa global.** 12,26% contra 7,1631% dá **lift 1,71**; a faixa mais
 segura fica em **0,69**, abaixo da média. Pela `fase_dia`, Plena Noite dá 1,41 e Pleno dia
-0,70 — a diferença entre noite e dia é de quase um terço da própria taxa global.
+0,70 — a diferença de **5,07 p.p.** entre noite e dia equivale a **70,7% da própria taxa
+global**.
 
 **Hipótese.** Três componentes somam-se na madrugada: **visibilidade** ruim, **fadiga ou
 sono** ao volante e **tráfego mais escasso** — que remove o "freio social" sem reduzir a
