@@ -26,15 +26,15 @@ Os notebooks seguem a numeração do exercício.
 
 ## Dados
 
-Os arquivos de origem **não são versionados** (`.gitignore`) por serem volumosos.
-Baixe-os em [Dados Abertos da PRF](https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos)
-e coloque em `dados_brutos/` com exatamente estes nomes:
+O repositório é **autocontido**: os CSVs de origem, as bases tratadas e os gráficos
+estão versionados. Quem clona já tem tudo — **não é preciso baixar nada** para rodar
+os notebooks.
 
 ```
 dados_brutos/
-├── datatran2023.csv    # 67.766 linhas
-├── datatran2024.csv    # 73.202 linhas
-└── datatran2025.csv    # 72.529 linhas
+├── datatran2023.csv    # 67.766 linhas  · 19,8 MB
+├── datatran2024.csv    # 73.202 linhas  · 21,4 MB
+└── datatran2025.csv    # 72.529 linhas  · 21,1 MB
 ```
 
 | Característica | Valor |
@@ -45,12 +45,43 @@ dados_brutos/
 | `data_inversa` | **ISO `yyyy-mm-dd`** (atenção: não é `dd/mm/yyyy`) |
 | Grão | 1 linha = 1 ocorrência de acidente |
 
+**Origem:** [Dados Abertos da PRF](https://www.gov.br/prf/pt-br/acesso-a-informacao/dados-abertos) —
+os três arquivos são os publicados pela Polícia Rodoviária Federal, sem alteração.
+MD5 no repositório: `0a7c200814c6bef67f05c86adc73a882` (2023),
+`b55ee95f37b24dc2489ce201e1b11ae6` (2024), `49b9b890080023274870a68d326a9e54` (2025).
+
+As bases tratadas e os gráficos também estão versionados:
+
+```
+dados_tratados/
+├── base_analitica_prf_2023_2025.csv    # 213.497 × 32  · 51,5 MB
+└── base_modelavel_prf_2023_2025.csv    # 213.497 × 27  · 45,6 MB
+
+resultados/
+├── g1_taxa_por_tipo_acidente.html
+├── g2_serie_mensal.html
+├── g3_faixa_horaria.html
+└── g4_sintese_achados.html
+```
+
+Com isso, dá para rodar **qualquer notebook isoladamente** logo após o clone: as
+Partes 5 a 7 leem as bases de `dados_tratados/`, sem precisar reexecutar as Partes 1
+a 4. As bases e os gráficos são **regeneráveis** — o notebook da Parte 4 reescreve as
+bases e o da Parte 6 reescreve os gráficos a cada execução, com o mesmo conteúdo —,
+mas estão no repositório para que a primeira execução seja imediata e para que os
+artefatos entregáveis no exercício possam ser inspecionados sem rodar nada.
+
 ## Estrutura do repositório
 
 ```
 .
-├── dados_brutos/          # CSVs originais (não versionados)
-├── dados_tratados/        # bases geradas pelos notebooks
+├── dados_brutos/          # CSVs originais da PRF (versionados)
+│   ├── datatran2023.csv
+│   ├── datatran2024.csv
+│   └── datatran2025.csv
+├── dados_tratados/        # bases geradas pelos notebooks (versionadas)
+│   ├── base_analitica_prf_2023_2025.csv
+│   └── base_modelavel_prf_2023_2025.csv
 ├── notebooks/
 │   ├── 01_parte1_ingestao.ipynb
 │   ├── 02_parte2_limpeza.ipynb
@@ -62,7 +93,11 @@ dados_brutos/
 │   ├── 08_parte5_nivel4.ipynb
 │   ├── 09_parte6_graficos.ipynb
 │   └── 10_parte7_sintese.ipynb
-├── resultados/            # gráficos gerados pelo notebook
+├── resultados/            # gráficos gerados pelo notebook (versionados)
+│   ├── g1_taxa_por_tipo_acidente.html
+│   ├── g2_serie_mensal.html
+│   ├── g3_faixa_horaria.html
+│   └── g4_sintese_achados.html
 ├── tools/
 │   ├── build_notebooks.py # gera os .ipynb a partir de uma fonte única
 │   ├── auditoria_conformidade.py  # checa o enunciado oficial, requisito a requisito
@@ -90,13 +125,17 @@ python tools/auditoria_qualitativa.py    #  89 checagens de texto, coerência e 
 |---|---|
 | `auditoria_conformidade.py` | Cada requisito do enunciado, parte a parte: fallback de encoding, colunas iguais entre os anos, `IGNORADO`, remoção das 5 colunas proibidas, `dt.dayofweek`, `verificar_data_leakage`, utf-8-sig, volume mínimo e taxa global nas 12 questões, os 3 gráficos da Parte 6 e os 3 achados da Parte 7 |
 | `auditoria_numerica.py` | Recalcula do zero, da base analítica, os números afirmados nas 12 questões, nos gráficos e na síntese — e compara com o que está escrito nos notebooks |
-| `auditoria_qualitativa.py` | Linguagem causal, locução "associado a" e sua concordância, tamanho das interpretações, coerência entre README e notebooks, e integridade do repositório (gerador reproduz os notebooks, dados e resultados fora do versionamento) |
+| `auditoria_qualitativa.py` | Linguagem causal, locução "associado a" e sua concordância, tamanho das interpretações, coerência entre README e notebooks, e integridade do repositório (gerador reproduz os notebooks; dados, bases e gráficos presentes e versionados; CSVs originais nunca sobrescritos) |
 
 Os três saem com código 0 quando não há falhas. O `auditoria_qualitativa.py` roda o
 gerador para conferir que ele reproduz os notebooks — e restaura os arquivos depois,
 para não perder os outputs versionados.
 
 ## Como executar
+
+**Não é preciso baixar nada:** os dados, as bases tratadas e os gráficos já estão
+no repositório. Após o clone, basta instalar as dependências e executar o notebook da
+parte que quiser.
 
 ```bash
 pip install pandas numpy plotly jupyter
@@ -226,8 +265,10 @@ ordem dentro do grupo.
 Alvo: 15.293 fatais (7,16%).
 
 As bases são gravadas com `;` e `utf-8-sig`, reabertas e conferidas com `assert` contra o
-original (linhas, colunas e alvo). Ficam fora do versionamento (`dados_tratados/*.csv`) por
-somarem ~97 MB — o notebook as regenera.
+original (linhas, colunas e alvo). São **versionadas** no repositório (juntas, ~97 MB), para que as Partes 5 a 7 rodem
+sem reexecutar as Partes 1 a 4. O notebook da Parte 4 as reescreve a cada execução — o
+conteúdo é idêntico, então não há divergência entre o que está no Git e o que o código
+produz.
 
 ## Questões de negócio (Parte 5)
 
@@ -292,8 +333,10 @@ Os gráficos 2 e 3 combinam **volume em barras** (eixo à direita) e **taxa de l
 linha** (eixo à esquerda), com a taxa global marcada por tracejado — a separação entre
 volume e gravidade é justamente o que o exercício pede que se enxergue.
 
-`resultados/` **não é versionado** (`.gitignore`): o notebook regenera os arquivos a cada
-execução. O HTML é **autocontido** (abre offline); o PNG depende do Chrome e é opcional.
+`resultados/` é **versionado** junto com os dados: os quatro HTMLs já estão no repositório,
+prontos para abrir offline, e o notebook os regenera a cada execução com o mesmo conteúdo.
+O HTML é **autocontido** (abre offline); o PNG depende do Chrome e é opcional — por isso só
+o HTML é versionado.
 
 ## Síntese (Parte 7)
 
