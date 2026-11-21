@@ -224,9 +224,9 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 
 | Questão | Achado |
 |---|---|
-| Q1 | Taxa estável: 7,17% → 7,14% → 7,18% (0,014 p.p. de variação) |
+| Q1 | Taxa estável: 7,17% → 7,14% → 7,18% (+0,015 p.p. de variação) |
 | Q2 | Maio lidera (7,71%); maio–agosto acima da global; fevereiro menor (6,57%) |
-| Q3 | Plena Noite 10,09% vs Pleno dia 5,02% — o dobro, com metade do volume |
+| Q3 | Plena Noite 10,09% vs Pleno dia 5,02% — o dobro, com 37,6% menos volume |
 | Q4 | Risco relativo fim de semana / dias úteis = **1,285** |
 
 ### Resultados do Nível 2
@@ -234,7 +234,7 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 | Questão | Achado |
 |---|---|
 | Q5 | Colisão frontal (lift 4,16) e atropelamento de pedestre (lift 4,04) — 45% dos fatais |
-| Q6 | Top 5 dominado por pedestre e contramão; álcool no pedestre 2,25 vs **álcool no condutor 0,63** |
+| Q6 | Top 5 dominado por pedestre e contramão; álcool do pedestre 2,25 (e 1,29 na outra categoria) vs **álcool no condutor 0,63** |
 | Q7 | Curva 8,19% > reta 7,35%, mas ponte (10,75%) e declive (9,85%) são piores; explode declarado como não-partição |
 
 ### Resultados do Nível 3
@@ -243,13 +243,13 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 |---|---|
 | Q8 | Pista Simples (9,83%) mais que dobra a Dupla (4,69%) em **7 de 7** condições; pior célula Simples+Nevoeiro (13,95%); chuva com lift 0,86 |
 | Q9 | Por **mortos**: BR-116 (1.190) e BR-101 (1.076); top 10 = 52,4% das mortes noturnas; só a BR-316 aparece também no ranking por taxa |
-| Q10 | Letalidade quase igual nos três períodos (6,63%–7,40%); Fim de Ano tem +8,7% acidentes/dia e +25% mortos/dia; Carnaval não se distingue de dia normal |
+| Q10 | Letalidade quase igual nos três períodos (6,63%–7,40%); Fim de Ano tem +8,7% acidentes/dia e +25,2% mortos/dia; Carnaval tem acidentes/dia iguais ao normal (−0,5%) mas **15,4% menos mortos/dia** |
 
 ### Resultados do Nível 4
 
 | Questão | Achado |
 |---|---|
-| Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; **MG lidera** (75 acidentes, 303 mortos, 27 UFs); principal causa: contramão (27,0%); colisão frontal 62,9% (razão 2,27); pista Simples 88,6% |
+| Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; **MG lidera** (75 acidentes, 303 mortos, 27 UFs); principal causa: contramão (27,0%); colisão frontal 62,9% (razão 2,27); pista Simples 88,6%; fases sobrerrepresentadas: Amanhecer (1,47) e Pleno dia (1,13) |
 | Q12 | Top 5 de PE 2024–2025 por **acidentes fatais**: Recife (45), Garanhuns (24), Jaboatão (24), Caruaru (24), Petrolina (23) — 23,7% dos fatais de PE; mesmo conjunto no ranking por mortos; SALOA (13 acidentes, 20 mortos) fica de fora pelo volume mínimo |
 
 ## Gráficos (Parte 6)
