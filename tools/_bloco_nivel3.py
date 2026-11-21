@@ -66,8 +66,8 @@ def notebook_parte5_nivel3():
         ),
         md(
             "**Interpretação.** O **tipo de pista domina o resultado**; o clima é secundário. Pista\n",
-            "**Simples** tem **9,83%** de letalidade contra **4,69%** na Dupla — **mais que o dobro** — e\n",
-            "taxa maior que a Dupla nas **7 de 7** condições com volume suficiente. A pior combinação é\n",
+            "**Simples** tem **9,83%** de letalidade — acima da global de **7,16%** (lift 1,37) — contra\n",
+            "**4,69%** na Dupla, maior nas **7 de 7** condições comparáveis. A pior combinação é\n",
             "**Simples + Nevoeiro/Neblina: 13,95%**. Volume mínimo: **50 por célula** (21 de 27 válidas).\n",
         ),
         md(
@@ -120,7 +120,8 @@ def notebook_parte5_nivel3():
             "**Interpretação.** Ordenando por **mortos**, o top 10 é dominado por **BR-116** (1.190 mortos\n",
             "em 11.724 acidentes noturnos) e **BR-101** (1.076 em 12.533), que juntas respondem por **2.266\n",
             "dos 8.535** mortos noturnos (26,5%); o top 10 completo concentra **52,4%** das mortes à noite.\n",
-            "Volume mínimo: **50 acidentes noturnos** na rodovia (83 das 119 BRs noturnas passam).\n",
+            "Só a **BR-316** tem taxa acima da global (20,47%, lift 2,86). Volume mínimo: **50 acidentes\n",
+            "noturnos** por rodovia (83 das 119 BRs noturnas passam).\n",
         ),
         md(
             "| BR | Acidentes | Mortos | Taxa | Mortos/100 ac. |\n",

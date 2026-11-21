@@ -64,13 +64,37 @@ dados_brutos/
 │   └── 10_parte7_sintese.ipynb
 ├── resultados/            # gráficos gerados pelo notebook
 ├── tools/
-│   └── build_notebooks.py # gera os .ipynb a partir de uma fonte única
+│   ├── build_notebooks.py # gera os .ipynb a partir de uma fonte única
+│   ├── auditoria_conformidade.py  # checa o enunciado oficial, requisito a requisito
+│   ├── auditoria_numerica.py      # recalcula todos os números da base
+│   └── auditoria_qualitativa.py   # causalidade, tamanho, README x notebooks
 └── README.md
 ```
 
 > Os notebooks são gerados por `tools/build_notebooks.py`. Edite o gerador e rode
 > `python tools/build_notebooks.py` para atualizar os `.ipynb` — assim o código-fonte fica
 > revisável em diff, sem o ruído de JSON de notebook.
+
+## Auditoria
+
+Três scripts verificam o trabalho de forma reproduzível. Rode na raiz do repositório,
+**depois** de executar os notebooks:
+
+```bash
+python tools/auditoria_conformidade.py   # 131 verificações contra o PDF oficial
+python tools/auditoria_numerica.py       # 113 recálculos a partir da base analítica
+python tools/auditoria_qualitativa.py    #  89 checagens de texto, coerência e repositório
+```
+
+| Script | O que verifica |
+|---|---|
+| `auditoria_conformidade.py` | Cada requisito do enunciado, parte a parte: fallback de encoding, colunas iguais entre os anos, `IGNORADO`, remoção das 5 colunas proibidas, `dt.dayofweek`, `verificar_data_leakage`, utf-8-sig, volume mínimo e taxa global nas 12 questões, os 3 gráficos da Parte 6 e os 3 achados da Parte 7 |
+| `auditoria_numerica.py` | Recalcula do zero, da base analítica, os números afirmados nas 12 questões, nos gráficos e na síntese — e compara com o que está escrito nos notebooks |
+| `auditoria_qualitativa.py` | Linguagem causal, locução "associado a" e sua concordância, tamanho das interpretações, coerência entre README e notebooks, e integridade do repositório (gerador reproduz os notebooks, dados e resultados fora do versionamento) |
+
+Os três saem com código 0 quando não há falhas. O `auditoria_qualitativa.py` roda o
+gerador para conferir que ele reproduz os notebooks — e restaura os arquivos depois,
+para não perder os outputs versionados.
 
 ## Como executar
 
@@ -242,14 +266,14 @@ aplicado e traz interpretação de 2–3 linhas, sem linguagem causal.
 | Questão | Achado |
 |---|---|
 | Q8 | Pista Simples (9,83%) mais que dobra a Dupla (4,69%) em **7 de 7** condições; pior célula Simples+Nevoeiro (13,95%); chuva com lift 0,86 |
-| Q9 | Por **mortos**: BR-116 (1.190) e BR-101 (1.076); top 10 = 52,4% das mortes noturnas; só a BR-316 aparece também no ranking por taxa |
+| Q9 | Por **mortos**: BR-116 (1.190) e BR-101 (1.076); top 10 = 52,4% das mortes noturnas; só a BR-316 aparece também no ranking por taxa — **20,47%** (lift 2,86) com 342 mortos |
 | Q10 | Letalidade quase igual nos três períodos (6,63%–7,40%); Fim de Ano tem +8,7% acidentes/dia e +25,2% mortos/dia; Carnaval tem acidentes/dia iguais ao normal (−0,5%) mas **15,4% menos mortos/dia** |
 
 ### Resultados do Nível 4
 
 | Questão | Achado |
 |---|---|
-| Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; **MG lidera** (75 acidentes, 303 mortos, 27 UFs); principal causa: contramão (27,0%); colisão frontal 62,9% (razão 2,27); pista Simples 88,6%; fases sobrerrepresentadas: Amanhecer (1,47) e Pleno dia (1,13) |
+| Q11 | 437 acidentes com 3+ mortos (0,205% da base) concentram **9,36% das mortes**; **MG lidera** (75 acidentes, 303 mortos, 27 UFs); principal causa: contramão (27,0%); colisão frontal 62,9% (razão 2,27); pista Simples 88,6%; fases sobrerrepresentadas: Amanhecer (1,47) e Pleno dia (1,13); top 10 de BRs = **49,2%** das mortes críticas |
 | Q12 | Top 5 de PE 2024–2025 por **acidentes fatais**: Recife (45), Garanhuns (24), Jaboatão (24), Caruaru (24), Petrolina (23) — 23,7% dos fatais de PE; mesmo conjunto no ranking por mortos; SALOA (13 acidentes, 20 mortos) fica de fora pelo volume mínimo |
 
 ## Gráficos (Parte 6)
@@ -280,7 +304,7 @@ recalculado no notebook, a partir da base analítica.
 | # | Achado | Observação | Onde | vs taxa global | Limitação |
 |---|---|---|---|---|---|
 | 1 | Colisão frontal e atropelamento de pedestre concentram a letalidade | 29,81% e 28,96%: 11,05% dos acidentes, **45,47% dos fatais** | Gráfico 1 + Q5/Q6 | lift **4,16** e **4,04** | classificação do BO, subnotificação, sem velocidade |
-| 2 | A madrugada tem a taxa mais alta e o volume mais baixo | 03h–06h: 6,9% dos acidentes e **11,9% dos fatais**; 2,50× a faixa mais segura | Gráfico 3 + Q3 | lift **1,71** (mais segura: 0,69) | `horario` é o do registro, sem exposição por km |
+| 2 | A madrugada tem a taxa mais alta e o volume mais baixo | 03h–06h: 6,9% dos acidentes e **11,9% dos fatais**; 2,50× a faixa mais segura | Gráfico 3 + Q3 | lift **1,71** (mais segura: 0,69); a diferença noite/dia vale **70,7%** da taxa global | `horario` é o do registro, sem exposição por km |
 | 3 | O problema é de geometria de via, não de sazonalidade | Pista Simples 9,89% contra Dupla 4,71%; contramão 6,1× mais frequente; 36 meses sem tendência | Gráfico 2 + Q8/Q11 | lift **1,38** (Dupla: 0,66) | `tipo_pista` é proxy, confundido com a BR |
 
 **Categoria descartada pelo filtro de volume:** `Participar de racha` — 52 acidentes, 13
