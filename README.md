@@ -65,11 +65,11 @@ resultados/
 ```
 
 Com isso, dá para rodar **qualquer notebook isoladamente** logo após o clone: as
-Partes 5 a 7 leem as bases de `dados_tratados/` e a Parte 6 lê `resultados/`, sem
-precisar reexecutar as Partes 1 a 4. As bases e os gráficos são **regeneráveis** —
-o notebook da Parte 4 e o da Parte 6 os reescrevem a cada execução —, mas estão no
-repositório para que a primeira execução seja imediata e para que os artefatos
-entregue no exercício possam ser inspecionados sem rodar nada.
+Partes 5 a 7 leem as bases de `dados_tratados/`, sem precisar reexecutar as Partes 1
+a 4. As bases e os gráficos são **regeneráveis** — o notebook da Parte 4 reescreve as
+bases e o da Parte 6 reescreve os gráficos a cada execução, com o mesmo conteúdo —,
+mas estão no repositório para que a primeira execução seja imediata e para que os
+artefatos entregáveis no exercício possam ser inspecionados sem rodar nada.
 
 ## Estrutura do repositório
 
