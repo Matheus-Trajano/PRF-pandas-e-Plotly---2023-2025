@@ -24,7 +24,8 @@ autossuficiente e os achados não dependam da memória de quem rodou a Parte 6.
         md_txt("""
 ## 0. Base analítica e utilitários
 
-Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.
+Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no repositório.
+Se o arquivo não existir, rode antes o notebook da Parte 4.
 """),
         SETUP,
         CARREGA_BASE,

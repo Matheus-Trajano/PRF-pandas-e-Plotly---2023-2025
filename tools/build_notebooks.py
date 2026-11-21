@@ -706,7 +706,8 @@ def notebook_parte5_nivel1():
 
         md("## 0. Base analítica da Parte 4\n",
            "\n",
-           "Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.\n"),
+           "Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no\n",
+           "repositório. Se o arquivo não existir, rode antes o notebook da Parte 4.\n"),
         SETUP,
         CARREGA_BASE,
         funcoes_analise(),
@@ -837,7 +838,8 @@ def notebook_parte5_nivel2():
 
         md("## 0. Base analítica da Parte 4\n",
            "\n",
-           "Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.\n"),
+           "Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no\n",
+           "repositório. Se o arquivo não existir, rode antes o notebook da Parte 4.\n"),
         SETUP,
         CARREGA_BASE,
         funcoes_analise(),
@@ -1255,7 +1257,8 @@ def notebook_parte5_nivel4():
 
         md("## 0. Base analítica da Parte 4\n",
            "\n",
-           "Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.\n"),
+           "Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no\n",
+           "repositório. Se o arquivo não existir, rode antes o notebook da Parte 4.\n"),
         SETUP,
         CARREGA_BASE,
         funcoes_analise(),
@@ -1554,7 +1557,8 @@ Taxa de letalidade = **% de acidentes fatais do grupo**, como em toda a Parte 5.
         md_txt("""
 ## 0. Base analítica e utilitários
 
-Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.
+Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no repositório.
+Se o arquivo não existir, rode antes o notebook da Parte 4.
 """),
         SETUP,
         CARREGA_BASE,
@@ -1828,8 +1832,9 @@ salvar_grafico(fig, "g3_faixa_horaria")
 | 2 | A taxa de letalidade varia ao longo dos 36 meses? | Oscila só 1,92 p.p. e sem tendência | `resultados/g2_serie_mensal.html` |
 | 3 | Que horas do dia concentram os acidentes fatais? | 03h–06h tem a taxa mais alta (12,26%) com volume baixo | `resultados/g3_faixa_horaria.html` |
 
-Os três arquivos ficam em `resultados/`, que **não é versionado** (`.gitignore`): o notebook
-os regenera a cada execução, a partir das bases em `dados_tratados/`.
+Os três arquivos ficam em `resultados/`, que é **versionado** junto com os dados: os HTMLs já
+estão no repositório, prontos para abrir offline, e o notebook os regenera a cada execução,
+a partir das bases em `dados_tratados/`.
 
 Cada gráfico é salvo em **HTML autocontido** (abre offline, sem depender de CDN). O PNG é
 também gerado quando há Chrome instalado para o `kaleido`; sem ele, o notebook segue sem
@@ -1862,7 +1867,8 @@ autossuficiente e os achados não dependam da memória de quem rodou a Parte 6.
         md_txt("""
 ## 0. Base analítica e utilitários
 
-Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.
+Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no repositório.
+Se o arquivo não existir, rode antes o notebook da Parte 4.
 """),
         SETUP,
         CARREGA_BASE,

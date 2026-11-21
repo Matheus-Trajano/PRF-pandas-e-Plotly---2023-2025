@@ -6,6 +6,7 @@ Uso:  python tools/auditoria_qualitativa.py
 """
 
 import glob
+import hashlib
 import json
 import os
 import re
@@ -185,31 +186,51 @@ for p in proibidas:
 print("\n[7] Integridade do repositorio")
 status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
 tracked = [l for l in status.split("\n") if l and not l.startswith("??")]
-ESPERADOS = ("README.md", "notebooks/", "tools/")
+ESPERADOS = ("README.md", "notebooks/", "tools/", ".gitignore",
+             "dados_brutos/", "dados_tratados/", "resultados/")
 inesperados = [l for l in tracked if not any(e in l for e in ESPERADOS)]
 check(not inesperados, "Nenhum arquivo inesperado modificado",
       f"Modificados inesperadamente: {inesperados}")
 
-# dados brutos e tratados nao versionados
-alvo_ignorado = ["dados_brutos/datatran2023.csv",
-                 "dados_tratados/base_analitica_prf_2023_2025.csv",
-                 "resultados/g1_taxa_por_tipo_acidente.html"]
-for d in alvo_ignorado:
-    r = subprocess.run(["git", "check-ignore", "-q", d], capture_output=True)
-    check(r.returncode == 0, f"{d} nao versionado", f"{d} VERSIONADO (deveria ser ignorado)")
+# o repositorio e autocontido: dados, bases e resultados versionados
+esperados = ["dados_brutos/datatran2023.csv", "dados_brutos/datatran2024.csv",
+             "dados_brutos/datatran2025.csv",
+             "dados_tratados/base_analitica_prf_2023_2025.csv",
+             "dados_tratados/base_modelavel_prf_2023_2025.csv",
+             "resultados/g1_taxa_por_tipo_acidente.html",
+             "resultados/g2_serie_mensal.html",
+             "resultados/g3_faixa_horaria.html",
+             "resultados/g4_sintese_achados.html"]
 r = subprocess.run(["git", "ls-files", "dados_brutos", "dados_tratados", "resultados"],
                    capture_output=True, text=True)
-versionados = [l for l in r.stdout.split("\n") if l and not l.endswith(".gitkeep")]
-check(not versionados, "Nenhum dado ou resultado esta versionado",
-      f"Versionados indevidamente: {versionados}")
+versionados = {l for l in r.stdout.split("\n") if l and not l.endswith(".gitkeep")}
+faltando = [d for d in esperados if d not in versionados]
+check(not faltando, "Dados, bases e resultados versionados no repositorio",
+      f"Nao versionados (o repo deve ser autocontido): {faltando}")
+# e nenhum deles pode estar ignorado pelo .gitignore
+for d in esperados:
+    r = subprocess.run(["git", "check-ignore", "-q", d], capture_output=True)
+    check(r.returncode != 0, f"{d} nao esta no .gitignore", f"{d} esta no .gitignore")
+# integridade dos CSVs originais: MD5 igual ao publicado pela PRF
+MD5_OFICIAL = {
+    "dados_brutos/datatran2023.csv": "0a7c200814c6bef67f05c86adc73a882",
+    "dados_brutos/datatran2024.csv": "b55ee95f37b24dc2489ce201e1b11ae6",
+    "dados_brutos/datatran2025.csv": "49b9b890080023274870a68d326a9e54",
+}
+for arquivo, md5_esperado in MD5_OFICIAL.items():
+    md5 = hashlib.md5(open(arquivo, "rb").read()).hexdigest()
+    check(md5 == md5_esperado, f"{arquivo} com MD5 oficial ({md5})",
+          f"{arquivo} MD5 {md5} != oficial {md5_esperado}")
 
 # o gerador reproduz o codigo dos notebooks (outputs nao contam)
 def assinatura():
     out = {}
     for f in sorted(glob.glob("notebooks/*.ipynb")):
         nb = json.load(open(f, encoding="utf-8"))
+        # o `source` pode ser serializado como lista de linhas ou string unica;
+        # normaliza para comparar o conteudo renderizado, nao a serializacao
         out[os.path.basename(f)] = [
-            (c["cell_type"], tuple(c.get("source", []))) for c in nb["cells"]]
+            (c["cell_type"], "".join(c.get("source", []))) for c in nb["cells"]]
     return out
 
 antes = assinatura()

@@ -12,7 +12,8 @@ def notebook_parte5_nivel4():
 
         md("## 0. Base analítica da Parte 4\n",
            "\n",
-           "Lida de `dados_tratados/`. Se ainda não existir, rode antes o notebook da Parte 4.\n"),
+           "Lida de `dados_tratados/base_analitica_prf_2023_2025.csv` — a base já vem no\n",
+           "repositório. Se o arquivo não existir, rode antes o notebook da Parte 4.\n"),
         SETUP,
         CARREGA_BASE,
         funcoes_analise(),
